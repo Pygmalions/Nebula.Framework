@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Buffers", "Nebula.Buffers\Nebula.Buffers.csproj", "{DBCA2126-5831-43E3-927E-E799D435330E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{871EC9F6-76F2-48BF-A447-3ADF4E6A630C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Buffers.Test", "Tests\Nebula.Buffers.Test\Nebula.Buffers.Test.csproj", "{D842FE3B-F6AC-43AA-8DD0-8954068993E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Pooling", "Nebula.Pooling\Nebula.Pooling.csproj", "{EDD03267-662E-4F71-8312-D24AF1826332}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Injection", "Nebula.Injection\Nebula.Injection.csproj", "{B00636FB-0963-44C5-91D7-2890213AE012}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DBCA2126-5831-43E3-927E-E799D435330E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBCA2126-5831-43E3-927E-E799D435330E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBCA2126-5831-43E3-927E-E799D435330E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBCA2126-5831-43E3-927E-E799D435330E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D842FE3B-F6AC-43AA-8DD0-8954068993E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D842FE3B-F6AC-43AA-8DD0-8954068993E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D842FE3B-F6AC-43AA-8DD0-8954068993E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D842FE3B-F6AC-43AA-8DD0-8954068993E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDD03267-662E-4F71-8312-D24AF1826332}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDD03267-662E-4F71-8312-D24AF1826332}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDD03267-662E-4F71-8312-D24AF1826332}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDD03267-662E-4F71-8312-D24AF1826332}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B00636FB-0963-44C5-91D7-2890213AE012}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B00636FB-0963-44C5-91D7-2890213AE012}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B00636FB-0963-44C5-91D7-2890213AE012}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B00636FB-0963-44C5-91D7-2890213AE012}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D167B3FE-A501-49A6-9A67-F801DF8AEAE3}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D842FE3B-F6AC-43AA-8DD0-8954068993E2} = {871EC9F6-76F2-48BF-A447-3ADF4E6A630C}
+	EndGlobalSection
+EndGlobal
