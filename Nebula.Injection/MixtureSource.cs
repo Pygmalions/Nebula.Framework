@@ -20,17 +20,26 @@ public class MixtureSource : ISource
         _sources.First().Configure(instance);
     }
 
+    /// <summary>
+    /// Add a source to this mixture source.
+    /// </summary>
+    /// <param name="source">Source to add.</param>
     public void Add(ISource source)
     {
         if (!_sources.Contains(source))
             _sources.Add(source);
     }
 
+    /// <summary>
+    /// Remove a source from this mixture source.
+    /// </summary>
+    /// <param name="source"></param>
     public void Remove(ISource source)
     {
         _sources.Remove(source);
     }
     
+    /// <inheritdoc />
     public object Acquire(Type type, InjectionAttribute? attribute)
     {
         if (Sources.Count == 0)
@@ -44,6 +53,7 @@ public class MixtureSource : ISource
                             "with the given type and attribute.");
     }
 
+    /// <inheritdoc />
     public bool Acquirable(Type type, InjectionAttribute? attribute)
     {
         return Sources.Count != 0 && _sources.Any(source => source.Acquirable(type, attribute));
