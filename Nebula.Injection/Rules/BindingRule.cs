@@ -31,7 +31,24 @@ public class BindingRule : IRule
                 throw new Exception("No matched constructor found.");
             _sourceForSelectedConstructor = source;
         }
-        instance = _selectedConstructor.Invoke(_boundArguments);
+
+        var constructorArguments = _boundArguments;
+        
+        var constructorParameters = _selectedConstructor.GetParameters();
+        if (constructorArguments == null && constructorParameters.Length > 0)
+        {
+            constructorArguments = new object?[constructorParameters.Length];
+            // Get all the needed injections from the source.
+            for (var parameterIndex = 0; parameterIndex < constructorParameters.Length; ++parameterIndex)
+            {
+                var constructorParameter = constructorParameters[parameterIndex];
+                constructorArguments[parameterIndex] = source.Acquire(
+                    constructorParameter.ParameterType,
+                    constructorParameter.GetCustomAttribute<InjectionAttribute>());
+            }
+        }
+        // If arguments mismatch, then the CLR will throw an exception, so there no need to check it.
+        instance = _selectedConstructor.Invoke(constructorArguments);
         source.Configure(instance);
         foreach (var (field, value) in _presetFields)
         {
