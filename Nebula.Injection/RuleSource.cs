@@ -56,7 +56,7 @@ public class RuleSource : ISource
     /// <exception cref="Exception">
     /// Ruleset source does not have the rule for the requiring abstract or interface type.
     /// </exception>
-    public object Acquire(Type type, InjectionAttribute? attribute)
+    public object Acquire(Type type, InjectionAttribute? attribute = null)
     {
         if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
             type = type.GetGenericArguments()[0];
@@ -71,7 +71,7 @@ public class RuleSource : ISource
     }
 
     /// <inheritdoc />
-    public bool Acquirable(Type type, InjectionAttribute? attribute)
+    public bool Acquirable(Type type, InjectionAttribute? attribute = null)
     {
         if (!type.IsAbstract && !type.IsInterface) return true;
         return _ruleset.TryGetValue(type, out var rule) && rule.Acceptable(this, type, attribute);
