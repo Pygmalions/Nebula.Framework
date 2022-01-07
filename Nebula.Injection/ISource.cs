@@ -8,7 +8,7 @@ public interface ISource : IConfigurator
     /// <param name="type">Type of instance to acquire. If nullable, will be considered as its underlying type.</param>
     /// <param name="attribute">Attribute which provides external injection information.</param>
     /// <returns>Instance as required.</returns>
-    object Acquire(Type type, InjectionAttribute? attribute);
+    object Acquire(Type type, InjectionAttribute? attribute = null);
 
     /// <summary>
     /// Check whether or not this source can provide the instance of the given type according to the given attribute.
@@ -22,5 +22,5 @@ public interface ISource : IConfigurator
     /// If true, this source can provide object as required,
     /// otherwise <see cref="Acquire"/> will throw an exception.
     /// </returns>
-    bool Acquirable(Type type, InjectionAttribute? attribute);
+    bool Acquirable(Type type, InjectionAttribute? attribute = null);
 }
