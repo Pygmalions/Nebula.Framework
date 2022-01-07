@@ -13,10 +13,19 @@ public class NameMatchRuleset : Ruleset
 
     public override object Get(ISource source, Type type, InjectionAttribute? attribute)
     {
-        if (attribute is not NamedInjectionAttribute namedAttribute)
-            throw new Exception("Given attribute is not a NamedInjectionAttribute.");
-        if (!_rules.TryGetValue(namedAttribute.Name, out var rule))
-            throw new Exception($"No matching rule for the given name {namedAttribute.Name}.");
+        IRule? rule;
+        if (attribute is NamedInjectionAttribute namedAttribute)
+        {
+            if (!_rules.TryGetValue(namedAttribute.Name, out rule))
+                throw new Exception($"No matching rule for the given name {namedAttribute.Name}.");
+        }
+        else
+        {
+            if (_rules.IsEmpty)
+                throw new Exception("The given attribute is not a NamedInjectionAttribute, " +
+                                    "and this ruleset is empty.");
+            rule = _rules.First().Value;
+        }
         return rule.Get(source, type, attribute);
     }
 

@@ -28,12 +28,21 @@ public class TagMatchRuleset : Ruleset
 
     public override object Get(ISource source, Type type, InjectionAttribute? attribute)
     {
-        if (attribute is not TaggedInjectionAttribute taggedAttribute)
-            throw new Exception("Given attribute is not a TaggedInjectionAttribute.");
-        var foundRule = SearchRule(taggedAttribute.Tags);
-        if (foundRule == null)
-            throw new Exception($"Can not find rule that matches the given tags: {taggedAttribute.Tags}");
-        return foundRule.Get(source, type, attribute);
+        IRule? rule;
+        if (attribute is TaggedInjectionAttribute taggedAttribute)
+        {
+            rule = SearchRule(taggedAttribute.Tags);
+            if (rule == null)
+                throw new Exception($"Can not find rule that matches the given tags: {taggedAttribute.Tags}");
+        }
+        else
+        {
+            if (_rules.IsEmpty)
+                throw new Exception("The given attribute is not a TaggedInjectionAttribute, " +
+                                    "and this ruleset is empty.");
+            rule = _rules.First().Key;
+        }
+        return rule.Get(source, type, attribute);
     }
 
     public override bool Acceptable(ISource source, Type type, InjectionAttribute? attribute)
