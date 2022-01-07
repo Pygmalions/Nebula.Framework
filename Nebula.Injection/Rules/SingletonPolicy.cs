@@ -4,7 +4,7 @@ namespace Nebula.Injection.Rules;
 
 public class SingletonPolicy : Policy
 {
-    private readonly ConcurrentDictionary<Type, object> Instances = new();
+    private static readonly ConcurrentDictionary<Type, object> Instances = new();
     
     private readonly Type _boundType;
 
