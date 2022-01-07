@@ -4,6 +4,15 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <Title>Nebula Pooling Library</Title>
+        <Authors>Nebula</Authors>
+        <Description>This library provides interface and some implementations of object pools.</Description>
+        <Copyright>MIT License.</Copyright>
+        <PackageProjectUrl>https://github.com/NebulaCommittee/Nebula.Framework</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/NebulaCommittee/Nebula.Framework/blob/main/LICENSE</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/NebulaCommittee/Nebula.Framework</RepositoryUrl>
+        <RepositoryType>Git</RepositoryType>
+        <PackageTags>Nebula; Nebula.Framework; Pooling; Object Pool;</PackageTags>
     </PropertyGroup>
 
 </Project>
