@@ -17,6 +17,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Injection.Test", "Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Reporting", "Nebula.Reporting\Nebula.Reporting.csproj", "{308805EE-99DB-4B0A-B9E9-17EE79BA6E06}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Attributing", "Nebula.Attributing\Nebula.Attributing.csproj", "{8F4BEFC7-AEEB-42EC-ABC6-735033F78B5D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Attributing.Test", "Tests\Nebula.Attributing.Test\Nebula.Attributing.Test.csproj", "{59453536-61F6-4EA5-866A-85DEB60E60B4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +51,14 @@ Global
 		{308805EE-99DB-4B0A-B9E9-17EE79BA6E06}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{308805EE-99DB-4B0A-B9E9-17EE79BA6E06}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{308805EE-99DB-4B0A-B9E9-17EE79BA6E06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F4BEFC7-AEEB-42EC-ABC6-735033F78B5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F4BEFC7-AEEB-42EC-ABC6-735033F78B5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F4BEFC7-AEEB-42EC-ABC6-735033F78B5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F4BEFC7-AEEB-42EC-ABC6-735033F78B5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59453536-61F6-4EA5-866A-85DEB60E60B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59453536-61F6-4EA5-866A-85DEB60E60B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59453536-61F6-4EA5-866A-85DEB60E60B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59453536-61F6-4EA5-866A-85DEB60E60B4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -57,5 +69,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{D842FE3B-F6AC-43AA-8DD0-8954068993E2} = {871EC9F6-76F2-48BF-A447-3ADF4E6A630C}
 		{1A09EFB4-243E-4E02-B539-D3CECEF2C384} = {871EC9F6-76F2-48BF-A447-3ADF4E6A630C}
+		{59453536-61F6-4EA5-866A-85DEB60E60B4} = {871EC9F6-76F2-48BF-A447-3ADF4E6A630C}
 	EndGlobalSection
 EndGlobal
