@@ -1,69 +1,13 @@
 ﻿using System.Collections.Concurrent;
 using System.Reflection;
 
-namespace Nebula.Proxying.Utilities;
+namespace Nebula.Proxying;
 
 public class ProxyManager : IProxiedObject
 { 
     private readonly ConcurrentDictionary<MethodInfo, IMethodProxy> _methodProxies = new();
     private readonly ConcurrentDictionary<PropertyInfo, IPropertyProxy> _propertyProxies = new();
 
-    /// <summary>
-    /// Scan and create proxies of <see cref="ExtensibleMethod"/> and <see cref="ExtensibleProperty"/>
-    /// for an object with methods and properties marked with <see cref="ProxyAttribute"/>.
-    /// </summary>
-    /// <param name="holder">Object to scan.</param>
-    public void ScanObject(object holder)
-    {
-        var holderType = holder.GetType();
-
-        foreach (var method in holderType.GetMethods(
-                     BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
-        {
-            var attribute = method.GetCustomAttribute<ProxyAttribute>();
-            switch (attribute)
-            {
-                case null:
-                    continue;
-                case ProxyEntranceAttribute { Destination: not null } methodAttribute:
-                {
-                    var destination = holderType.GetMethod(methodAttribute.Destination);
-                    if (destination == null)
-                        throw new Exception("Failed to create redirection proxy:" +
-                                            $"Type {holderType} has no method named {methodAttribute.Destination}.");
-                    AddMethodProxy(method, new ExtensibleMethod(holder, destination));
-                    break;
-                }
-                default:
-                    AddMethodProxy(method, new ExtensibleMethod(holder, method));
-                    break;
-            }
-        }
-        
-        foreach (var property in holderType.GetProperties(
-                     BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
-        {
-            var attribute = property.GetCustomAttribute<ProxyAttribute>();
-            switch (attribute)
-            {
-                case null:
-                    continue;
-                case ProxyEntranceAttribute { Destination: not null } propertyAttribute:
-                {
-                    var destination = holderType.GetProperty(propertyAttribute.Destination);
-                    if (destination == null)
-                        throw new Exception("Failed to create redirection proxy:" +
-                                            $"Type {holderType} has no property named {propertyAttribute.Destination}.");
-                    AddPropertyProxy(property, new ExtensibleProperty(holder, destination));
-                    break;
-                }
-                default:
-                    AddPropertyProxy(property, new ExtensibleProperty(holder, property));
-                    break;
-            }
-        }
-    }
-    
     /// <summary>
     /// Add a method proxy to this manager.
     /// </summary>

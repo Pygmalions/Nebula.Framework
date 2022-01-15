@@ -2,7 +2,7 @@
 
 public class AccessContext
 {
-    public ExtensibleProperty Proxy { get; }
+    public IExtensibleProperty Proxy { get; }
 
     private object? _accessingValue;
 
@@ -40,7 +40,7 @@ public class AccessContext
     /// </summary>
     public bool Skipped { get; private set; }
     
-    public AccessContext(ExtensibleProperty proxy, object? value)
+    public AccessContext(IExtensibleProperty proxy, object? value)
     {
         Proxy = proxy;
         _accessingValue = value;

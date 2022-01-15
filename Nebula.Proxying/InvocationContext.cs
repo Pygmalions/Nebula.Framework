@@ -4,7 +4,7 @@ namespace Nebula.Proxying;
 
 public class InvocationContext
 {
-    public ExtensibleMethod Proxy { get; }
+    public IExtensibleMethod Proxy { get; }
 
     public object?[] Arguments { get; }
 
@@ -39,7 +39,7 @@ public class InvocationContext
     /// </summary>
     public bool Skipped { get; private set; }
     
-    public InvocationContext(ExtensibleMethod proxy, params object?[] arguments)
+    public InvocationContext(IExtensibleMethod proxy, params object?[] arguments)
     {
         Proxy = proxy;
         Arguments = arguments;

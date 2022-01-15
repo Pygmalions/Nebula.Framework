@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Nebula.Proxying.Utilities;
 
 
 namespace Nebula.Proxying.Test;
@@ -37,7 +38,7 @@ public class SampleObject : IProxiedObject
             .Invoke(number)!;
     }
 
-    private readonly Utilities.ProxyManager _proxies = new();
+    private readonly ProxyManager _proxies = new();
     
     public SampleObject()
     {

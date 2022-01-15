@@ -2,38 +2,27 @@
 
 namespace Nebula.Proxying;
 
-public class ExtensibleMethod : IMethodProxy
+public class DecoratedMethod : IExtensibleMethod
 {
-    /// <summary>
-    /// Event triggered before the proxied method is invoked.
-    /// </summary>
+    /// <inheritdoc />
     public event Action<InvocationContext> Invoking
     {
         add => _invokingHandlers.Add(value);
         remove => _invokingHandlers.Remove(value);
     }
-    /// <summary>
-    /// Event triggered after the proxied method is invoked.
-    /// </summary>
+    /// <inheritdoc />
     public event Action<InvocationContext> Invoked
     {
         add => _invokedHandlers.Add(value);
         remove => _invokedHandlers.Remove(value);
     }
     
-    /// <summary>
-    /// Object which holds the proxied method.
-    /// </summary>
+    /// <inheritdoc />
     public object ProxiedHolder { get; }
-    
-    /// <summary>
-    /// 
-    /// </summary>
+    /// <inheritdoc />
     public MethodInfo ProxiedMethod { get; }
     
-    /// <summary>
-    /// Whether the proxied method accept null value as a return or not.
-    /// </summary>
+    /// <inheritdoc />
     public bool NullReturnAccepted { get; }
 
     /// <summary>
@@ -45,7 +34,7 @@ public class ExtensibleMethod : IMethodProxy
     /// </summary>
     private readonly HashSet<Action<InvocationContext>> _invokedHandlers = new();
 
-    public ExtensibleMethod(object holder, MethodInfo method)
+    public DecoratedMethod(object holder, MethodInfo method)
     {
         ProxiedHolder = holder;
         ProxiedMethod = method;
@@ -79,7 +68,6 @@ public class ExtensibleMethod : IMethodProxy
 
         if (context.ThrowingException != null)
             throw context.ThrowingException;
-        
         return context.ReturningValue;
     }
 }

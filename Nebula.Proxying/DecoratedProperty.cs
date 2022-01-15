@@ -2,55 +2,41 @@
 
 namespace Nebula.Proxying;
 
-public class ExtensibleProperty : IPropertyProxy
+public class DecoratedProperty : IExtensibleProperty
 {
-    /// <summary>
-    /// Event triggered before the value is got.
-    /// </summary>
+    /// <inheritdoc />
     public event Action<AccessContext> Getting
     {
         add => _gettingHandlers.Add(value);
         remove => _gettingHandlers.Remove(value);
     }
-    /// <summary>
-    /// Event triggered after the value is got.
-    /// </summary>
+    /// <inheritdoc />
     public event Action<AccessContext> AfterGetting
     {
         add => _afterGettingHandlers.Add(value);
         remove => _afterGettingHandlers.Remove(value);
     }
     
-    /// <summary>
-    /// Event triggered before the value is set.
-    /// </summary>
+    /// <inheritdoc />
     public event Action<AccessContext> Setting
     {
         add => _settingHandlers.Add(value);
         remove => _settingHandlers.Remove(value);
     }
-    /// <summary>
-    /// Event triggered after the value is set.
-    /// </summary>
+    /// <inheritdoc />
     public event Action<AccessContext> AfterSetting
     {
         add => _afterSettingHandlers.Add(value);
         remove => _afterSettingHandlers.Remove(value);
     }
     
-    /// <summary>
-    /// Object which holds the proxied method.
-    /// </summary>
+    /// <inheritdoc />
     public object ProxiedHolder { get; }
     
-    /// <summary>
-    /// 
-    /// </summary>
+    /// <inheritdoc />
     public PropertyInfo ProxiedProperty { get; }
     
-    /// <summary>
-    /// Whether the proxied method accept null value as a return or not.
-    /// </summary>
+    /// <inheritdoc />
     public bool NullValueAccepted { get; }
 
     /// <summary>
@@ -70,7 +56,7 @@ public class ExtensibleProperty : IPropertyProxy
     /// </summary>
     private readonly HashSet<Action<AccessContext>> _afterSettingHandlers = new();
 
-    public ExtensibleProperty(object holder, PropertyInfo property)
+    public DecoratedProperty(object holder, PropertyInfo property)
     {
         ProxiedHolder = holder;
         ProxiedProperty = property;

@@ -25,7 +25,7 @@ public class PropertyProxyTest
         var proxyInvoked = false;
 
         var proxy = testTarget.GetPropertyProxy(testTarget.GetType().GetProperty(nameof(testTarget.Number))!)
-            as ExtensibleProperty;
+            as DecoratedProperty;
 
         Assert.NotNull(proxy);
         
@@ -46,7 +46,7 @@ public class PropertyProxyTest
         var propertyValue = -1;
         
         var proxy = testTarget.GetPropertyProxy(testTarget.GetType().GetProperty(nameof(testTarget.Number))!)
-            as ExtensibleProperty;
+            as DecoratedProperty;
 
         Assert.NotNull(proxy);
 
@@ -75,7 +75,7 @@ public class PropertyProxyTest
         var accessingValue = -1;
         
         var proxy = testTarget.GetPropertyProxy(testTarget.GetType().GetProperty(nameof(testTarget.Number))!)
-            as ExtensibleProperty;
+            as DecoratedProperty;
 
         Assert.NotNull(proxy);
 
@@ -101,7 +101,7 @@ public class PropertyProxyTest
         var proxyInvoked = false;
         var propertyValue = -1;
         var proxy = testTarget.GetPropertyProxy(testTarget.GetType().GetProperty(nameof(testTarget.Number))!)
-            as ExtensibleProperty;
+            as DecoratedProperty;
 
         Assert.NotNull(proxy);
         
@@ -122,7 +122,7 @@ public class PropertyProxyTest
         var testTarget = new SampleObject();
         
         var proxy = testTarget.GetPropertyProxy(testTarget.GetType().GetProperty(nameof(testTarget.Number))!)
-            as ExtensibleProperty;
+            as DecoratedProperty;
 
         Assert.NotNull(proxy);
         
@@ -149,7 +149,7 @@ public class PropertyProxyTest
         var testTarget = new SampleObject();
         
         var proxy = testTarget.GetPropertyProxy(testTarget.GetType().GetProperty(nameof(testTarget.Number))!)
-            as ExtensibleProperty;
+            as DecoratedProperty;
 
         Assert.NotNull(proxy);
         
@@ -176,7 +176,7 @@ public class PropertyProxyTest
         var testTarget = new SampleObject();
         
         var proxy = testTarget.GetPropertyProxy(testTarget.GetType().GetProperty(nameof(testTarget.Number))!)
-            as ExtensibleProperty;
+            as DecoratedProperty;
 
         Assert.NotNull(proxy);
         
@@ -204,7 +204,7 @@ public class PropertyProxyTest
         var testTarget = new SampleObject();
         
         var proxy = testTarget.GetPropertyProxy(testTarget.GetType().GetProperty(nameof(testTarget.Number))!)
-            as ExtensibleProperty;
+            as DecoratedProperty;
 
         Assert.NotNull(proxy);
         

@@ -20,7 +20,7 @@ public class MethodProxyTest
         var argumentText = "";
 
         var methodProxy = testTarget.GetMethodProxy(testTarget.GetType().GetMethod(nameof(testTarget.GetEchoString))!)
-            as ExtensibleMethod;
+            as DecoratedMethod;
 
         Assert.NotNull(methodProxy);
         
@@ -47,7 +47,7 @@ public class MethodProxyTest
         var returningText = "";
 
         var methodProxy = testTarget.GetMethodProxy(testTarget.GetType().GetMethod(nameof(testTarget.GetEchoString))!)
-            as ExtensibleMethod;
+            as DecoratedMethod;
 
         Assert.NotNull(methodProxy);
         
@@ -71,7 +71,7 @@ public class MethodProxyTest
         var testTarget = new SampleObject();
 
         var methodProxy = testTarget.GetMethodProxy(testTarget.GetType().GetMethod(nameof(testTarget.GetEchoString))!)
-            as ExtensibleMethod;
+            as DecoratedMethod;
 
         Assert.NotNull(methodProxy);
         
@@ -91,7 +91,7 @@ public class MethodProxyTest
         var testTarget = new SampleObject();
 
         var methodProxy = testTarget.GetMethodProxy(testTarget.GetType().GetMethod(nameof(testTarget.GetEchoString))!)
-            as ExtensibleMethod;
+            as DecoratedMethod;
 
         Assert.NotNull(methodProxy);
         
@@ -111,7 +111,7 @@ public class MethodProxyTest
         var testTarget = new SampleObject();
 
         var methodProxy = testTarget.GetMethodProxy(testTarget.GetType().GetMethod(nameof(testTarget.AddTick))!)
-            as ExtensibleMethod;
+            as DecoratedMethod;
 
         Assert.NotNull(methodProxy);
 
@@ -144,7 +144,7 @@ public class MethodProxyTest
         var testTarget = new SampleObject();
 
         var methodProxy = testTarget.GetMethodProxy(testTarget.GetType().GetMethod(nameof(testTarget.AddTick))!)
-            as ExtensibleMethod;
+            as DecoratedMethod;
 
         Assert.NotNull(methodProxy);
 
