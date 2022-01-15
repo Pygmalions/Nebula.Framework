@@ -1,0 +1,137 @@
+﻿using System.Collections.Concurrent;
+using System.Reflection;
+
+namespace Nebula.Proxying.Utilities;
+
+public class ProxyManager : IProxiedObject
+{ 
+    private readonly ConcurrentDictionary<MethodInfo, IMethodProxy> _methodProxies = new();
+    private readonly ConcurrentDictionary<PropertyInfo, IPropertyProxy> _propertyProxies = new();
+
+    /// <summary>
+    /// Scan and create proxies of <see cref="ExtensibleMethod"/> and <see cref="ExtensibleProperty"/>
+    /// for an object with methods and properties marked with <see cref="ProxyAttribute"/>.
+    /// </summary>
+    /// <param name="holder">Object to scan.</param>
+    public void ScanObject(object holder)
+    {
+        var holderType = holder.GetType();
+
+        foreach (var method in holderType.GetMethods(
+                     BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+        {
+            var attribute = method.GetCustomAttribute<ProxyAttribute>();
+            switch (attribute)
+            {
+                case null:
+                    continue;
+                case ProxyEntranceAttribute { Destination: not null } methodAttribute:
+                {
+                    var destination = holderType.GetMethod(methodAttribute.Destination);
+                    if (destination == null)
+                        throw new Exception("Failed to create redirection proxy:" +
+                                            $"Type {holderType} has no method named {methodAttribute.Destination}.");
+                    AddMethodProxy(method, new ExtensibleMethod(holder, destination));
+                    break;
+                }
+                default:
+                    AddMethodProxy(method, new ExtensibleMethod(holder, method));
+                    break;
+            }
+        }
+        
+        foreach (var property in holderType.GetProperties(
+                     BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+        {
+            var attribute = property.GetCustomAttribute<ProxyAttribute>();
+            switch (attribute)
+            {
+                case null:
+                    continue;
+                case ProxyEntranceAttribute { Destination: not null } propertyAttribute:
+                {
+                    var destination = holderType.GetProperty(propertyAttribute.Destination);
+                    if (destination == null)
+                        throw new Exception("Failed to create redirection proxy:" +
+                                            $"Type {holderType} has no property named {propertyAttribute.Destination}.");
+                    AddPropertyProxy(property, new ExtensibleProperty(holder, destination));
+                    break;
+                }
+                default:
+                    AddPropertyProxy(property, new ExtensibleProperty(holder, property));
+                    break;
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Add a method proxy to this manager.
+    /// </summary>
+    /// <param name="method">Proxy for which to add.</param>
+    /// <param name="proxy">Proxy to add.</param>
+    public void AddMethodProxy(MethodInfo method, IMethodProxy proxy)
+        => _methodProxies[method] = proxy;
+
+    /// <summary>
+    /// Remove the proxy of the given method.
+    /// </summary>
+    /// <param name="method">Proxy for which to remove.</param>
+    public void RemoveMethodProxy(MethodInfo method)
+        => _methodProxies.TryRemove(method, out _);
+    
+    /// <summary>
+    /// Add a property proxy to this manager.
+    /// </summary>
+    /// <param name="property">Property for which proxy is added.</param>
+    /// <param name="proxy">Proxy to add.</param>
+    public void AddPropertyProxy(PropertyInfo property, IPropertyProxy proxy)
+        => _propertyProxies[property] = proxy;
+    
+    /// <summary>
+    /// Remove the proxy of the given property.
+    /// </summary>
+    /// <param name="property">Proxy for which to remove.</param>
+    public void RemovePropertyProxy(PropertyInfo property)
+        => _propertyProxies.TryRemove(property, out _);
+
+    /// <inheritdoc />
+    public IMethodProxy? GetMethodProxy(MethodInfo method)
+        => _methodProxies.TryGetValue(method, out var proxy) ? proxy : null;
+
+    /// <inheritdoc />
+    public IPropertyProxy? GetPropertyProxy(PropertyInfo property)
+        => _propertyProxies.TryGetValue(property, out var proxy) ? proxy : null;
+    
+    public IProxy? this [MemberInfo member]
+    {
+        get
+        {
+            return member switch
+            {
+                MethodInfo method => GetMethodProxy(method),
+                PropertyInfo property => GetPropertyProxy(property),
+                _ => throw new Exception("Proxy manager can only manage proxies of method and property " +
+                                         $"rather than {member.MemberType}")
+            };
+        }
+        set
+        {
+            switch (member)
+            {
+                case MethodInfo method:
+                    if (value is not IMethodProxy methodProxy)
+                        throw new Exception("Only objects of IMethodProxy can be registered to a method.");
+                    AddMethodProxy(method, methodProxy);
+                    break;
+                case PropertyInfo property:
+                    if (value is not IPropertyProxy propertyProxy)
+                        throw new Exception("Only objects of IPropertyProxy can be registered to a property.");
+                    AddPropertyProxy(property, propertyProxy);
+                    break;
+                default:
+                    throw new Exception("Proxy manager can only manage proxies of method and property " +
+                                        $"rather than {member.MemberType}");
+            }
+        }
+    }
+}
