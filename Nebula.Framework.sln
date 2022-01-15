@@ -25,6 +25,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Proxying", "Nebula.P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Proxying.Test", "Tests\Nebula.Proxying.Test\Nebula.Proxying.Test.csproj", "{DE2148E7-B5C1-4FA7-9ECC-4ECADDF607E7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Prism", "Nebula.Prism\Nebula.Prism.csproj", "{A8E598BA-5423-4F5D-81E2-D5CB647B7B4F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Prism.Test", "Tests\Nebula.Prism.Test\Nebula.Prism.Test.csproj", "{505CFB8D-A243-45FC-ABC1-D7CBDF4103E0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +75,14 @@ Global
 		{DE2148E7-B5C1-4FA7-9ECC-4ECADDF607E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE2148E7-B5C1-4FA7-9ECC-4ECADDF607E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE2148E7-B5C1-4FA7-9ECC-4ECADDF607E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8E598BA-5423-4F5D-81E2-D5CB647B7B4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8E598BA-5423-4F5D-81E2-D5CB647B7B4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8E598BA-5423-4F5D-81E2-D5CB647B7B4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8E598BA-5423-4F5D-81E2-D5CB647B7B4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{505CFB8D-A243-45FC-ABC1-D7CBDF4103E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{505CFB8D-A243-45FC-ABC1-D7CBDF4103E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{505CFB8D-A243-45FC-ABC1-D7CBDF4103E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{505CFB8D-A243-45FC-ABC1-D7CBDF4103E0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -83,5 +95,6 @@ Global
 		{1A09EFB4-243E-4E02-B539-D3CECEF2C384} = {871EC9F6-76F2-48BF-A447-3ADF4E6A630C}
 		{59453536-61F6-4EA5-866A-85DEB60E60B4} = {871EC9F6-76F2-48BF-A447-3ADF4E6A630C}
 		{DE2148E7-B5C1-4FA7-9ECC-4ECADDF607E7} = {871EC9F6-76F2-48BF-A447-3ADF4E6A630C}
+		{505CFB8D-A243-45FC-ABC1-D7CBDF4103E0} = {871EC9F6-76F2-48BF-A447-3ADF4E6A630C}
 	EndGlobalSection
 EndGlobal
