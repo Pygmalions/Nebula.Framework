@@ -7,9 +7,9 @@ namespace Nebula.Prism.Test;
 public class DynamicGeneratorTest
 {
     [Test]
-    public void ConstructorFunction()
+    public void InterfaceFunction()
     {
-        var refraction = DynamicGenerator.GetRefraction<SampleObject>();
+        var refraction = DynamicGenerator.GlobalInstance.GetRefraction<SampleObject>();
         var testObject = Activator.CreateInstance(refraction);
         var testSample = testObject as SampleObject;
         Assert.NotNull(testObject);
@@ -20,11 +20,5 @@ public class DynamicGeneratorTest
         // Verify the existence of the proxy.
         Assert.NotNull(
             provider!.GetMethodProxy(typeof(SampleObject).GetMethod(nameof(SampleObject.AddNumber))!));
-        // Verify the normal function of AddNumber.
-        var result = testSample.AddNumber(1);
-        Assert.AreEqual(0, result);
-        Assert.AreEqual(0, testSample.Number);
-
-        testSample.AddNumber(1);
     }
 }

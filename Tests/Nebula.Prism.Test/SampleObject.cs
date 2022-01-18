@@ -25,11 +25,15 @@ namespace Nebula.Prism.Test
 
         public int Test(int a, int b, ProxyManager c, int d)
         {
-            var u = (int)(TestParams(a, b, c, d, A));
+            var x = new object();
+            var u = (int)(TestParams(a, b, c, x, A));
             if (u == 3)
             {
                 u = 2;
             }
+
+            var s = Ads;
+            Ads = 12;
             return u;
         }
         
@@ -43,6 +47,12 @@ namespace Nebula.Prism.Test
         {
             Number += increment;
             return Number;
+        }
+
+        public virtual int Ads
+        {
+            get;
+            set;
         }
     }
 }
