@@ -5,6 +5,21 @@ namespace Nebula.Prism;
 
 public partial class DynamicGenerator
 {
+    private static class TypeMeta
+    {
+        public static readonly Type ClassType = typeof(Type);
+
+        public static class Methods
+        {
+            public static readonly MethodInfo GetProperty =
+                ClassType.GetMethod(nameof(Type.GetProperty),
+                    new[] { typeof(string) })!;
+            public static readonly MethodInfo GetMethod =
+                ClassType.GetMethod(nameof(Type.GetProperty),
+                    new[] { typeof(string) })!;
+        }
+    }
+    
     private static class MethodBaseMeta
     {
         public static readonly Type ClassType = typeof(MethodBase);
@@ -17,6 +32,17 @@ public partial class DynamicGenerator
         }
     }
 
+    private static class ObjectMeta
+    {
+        public static readonly Type ClassType = typeof(object);
+
+        public static class Methods
+        {
+            public static readonly MethodInfo GetType =
+                ClassType.GetMethod(nameof(object.GetType))!;
+        }
+    }
+    
     private static class GenerationAttributeMeta
     {
         public static readonly Type ClassType = typeof(GeneratedByPrismAttribute);
@@ -48,6 +74,12 @@ public partial class DynamicGenerator
 
             public static readonly MethodInfo AddPropertyProxy =
                 ClassType.GetMethod(nameof(ProxyManager.AddPropertyProxy))!;
+
+            public static readonly MethodInfo GetMethodProxy =
+                ClassType.GetMethod(nameof(ProxyManager.GetMethodProxy))!;
+            
+            public static readonly MethodInfo GetPropertyProxy =
+                ClassType.GetMethod(nameof(ProxyManager.GetPropertyProxy))!;
         }
     }
 
@@ -99,7 +131,7 @@ public partial class DynamicGenerator
         public static class Constructors
         {
             public static readonly ConstructorInfo ObjectPropertyInfo =
-                ClassType.GetConstructor(new[] { typeof(object), typeof(MethodInfo) })!;
+                ClassType.GetConstructor(new[] { typeof(object), typeof(PropertyInfo) })!;
         }
 
         public static class Methods
@@ -187,7 +219,5 @@ public partial class DynamicGenerator
                     ClassType.GetProperty(nameof(AccessContext.AccessingValue))!.SetMethod!;
             }
         }
-
-        
     }
 }

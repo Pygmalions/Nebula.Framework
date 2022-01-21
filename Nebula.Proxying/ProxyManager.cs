@@ -6,7 +6,7 @@ namespace Nebula.Proxying;
 public class ProxyManager : IProxiedObject
 { 
     private readonly ConcurrentDictionary<MethodInfo, IMethodProxy> _methodProxies = new();
-    private readonly ConcurrentDictionary<PropertyInfo, IPropertyProxy> _propertyProxies = new();
+    private readonly ConcurrentDictionary<string, IPropertyProxy> _propertyProxies = new();
 
     /// <summary>
     /// Add a method proxy to this manager.
@@ -29,14 +29,14 @@ public class ProxyManager : IProxiedObject
     /// <param name="property">Property for which proxy is added.</param>
     /// <param name="proxy">Proxy to add.</param>
     public void AddPropertyProxy(PropertyInfo property, IPropertyProxy proxy)
-        => _propertyProxies[property] = proxy;
+        => _propertyProxies[property.Name] = proxy;
     
     /// <summary>
     /// Remove the proxy of the given property.
     /// </summary>
     /// <param name="property">Proxy for which to remove.</param>
     public void RemovePropertyProxy(PropertyInfo property)
-        => _propertyProxies.TryRemove(property, out _);
+        => _propertyProxies.TryRemove(property.Name, out _);
 
     /// <inheritdoc />
     public IMethodProxy? GetMethodProxy(MethodInfo method)
@@ -44,7 +44,7 @@ public class ProxyManager : IProxiedObject
 
     /// <inheritdoc />
     public IPropertyProxy? GetPropertyProxy(PropertyInfo property)
-        => _propertyProxies.TryGetValue(property, out var proxy) ? proxy : null;
+        => _propertyProxies.TryGetValue(property.Name, out var proxy) ? proxy : null;
     
     public IProxy? this [MemberInfo member]
     {

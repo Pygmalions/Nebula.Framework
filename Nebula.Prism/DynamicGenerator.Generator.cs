@@ -29,7 +29,7 @@ public partial class DynamicGenerator
         var attributeBuilder = new CustomAttributeBuilder(
             GenerationAttributeMeta.Constructors.Default, Array.Empty<object>());
         proxyMethod.SetCustomAttribute(attributeBuilder);
-        classBuilder.DefineMethodOverride(proxyMethod, property.GetSetMethod()!);
+        // classBuilder.DefineMethodOverride(proxyMethod, property.GetSetMethod()!);
         
         #region Code
         
@@ -117,7 +117,7 @@ public partial class DynamicGenerator
         var attributeBuilder = new CustomAttributeBuilder(
             GenerationAttributeMeta.Constructors.Default, Array.Empty<object>());
         proxyMethod.SetCustomAttribute(attributeBuilder);
-        classBuilder.DefineMethodOverride(proxyMethod, property.GetGetMethod()!);
+        // classBuilder.DefineMethodOverride(proxyMethod, property.GetGetMethod()!);
         
         #region Code
         
@@ -343,23 +343,8 @@ public partial class DynamicGenerator
         constructorCode.Emit(OpCodes.Stfld, managerField);
         #endregion
 
-        var generatedProxies = methodProxies.ToList();
-        foreach (var (proxyField, setter, getter, property) in propertyProxies)
-        {
-            if (setter != null && property.CanWrite)
-            {
-                generatedProxies.Add((proxyField, setter, property.GetSetMethod()!));
-            }
-
-            if (getter != null && property.CanRead)
-            {
-                generatedProxies.Add((proxyField, getter, property.GetGetMethod()!));
-            }
-        }
-
-
         #region Initialize proxies.
-        foreach (var (proxyField, proxyMethod, baseMethod) in generatedProxies)
+        foreach (var (proxyField, proxyMethod, baseMethod) in methodProxies)
         {
             constructorCode.Emit(OpCodes.Ldarg_0);
             constructorCode.Emit(OpCodes.Ldarg_0);
@@ -377,6 +362,34 @@ public partial class DynamicGenerator
             constructorCode.Emit(OpCodes.Ldarg_0);
             constructorCode.Emit(OpCodes.Ldfld, proxyField);
             constructorCode.Emit(OpCodes.Callvirt, ProxyManagerMeta.Methods.AddMethodProxy);
+        }
+        var localPropertyInfo = constructorCode.DeclareLocal(typeof(PropertyInfo));
+        var localHolderType = constructorCode.DeclareLocal(typeof(Type));
+        constructorCode.Emit(OpCodes.Ldarg_0);
+        constructorCode.Emit(OpCodes.Call, 
+            ObjectMeta.Methods.GetType);
+        constructorCode.Emit(OpCodes.Stloc, localHolderType);
+        foreach (var (proxyField, setter, getter, property) in propertyProxies)
+        {
+            constructorCode.Emit(OpCodes.Ldloc, localHolderType);
+            constructorCode.Emit(OpCodes.Ldstr, property.Name);
+            constructorCode.Emit(OpCodes.Callvirt, 
+                TypeMeta.Methods.GetProperty);
+            constructorCode.Emit(OpCodes.Stloc, localPropertyInfo);
+            
+            constructorCode.Emit(OpCodes.Ldarg_0);
+            constructorCode.Emit(OpCodes.Ldarg_0);
+            constructorCode.Emit(OpCodes.Ldloc, localPropertyInfo);
+            constructorCode.Emit(OpCodes.Newobj, 
+                PropertyProxyEntryMeta.Constructors.ObjectPropertyInfo);
+            constructorCode.Emit(OpCodes.Stfld, proxyField);
+            
+            constructorCode.Emit(OpCodes.Ldarg_0);
+            constructorCode.Emit(OpCodes.Ldfld, managerField);
+            constructorCode.Emit(OpCodes.Ldloc, localPropertyInfo);
+            constructorCode.Emit(OpCodes.Ldarg_0);
+            constructorCode.Emit(OpCodes.Ldfld, proxyField);
+            constructorCode.Emit(OpCodes.Callvirt, ProxyManagerMeta.Methods.AddPropertyProxy);
         }
         #endregion
         
@@ -401,7 +414,7 @@ public partial class DynamicGenerator
         // Load argument of MethodInfo.
         gettingMethodCode.Emit(OpCodes.Ldarg_1);
         gettingMethodCode.Emit(OpCodes.Callvirt, 
-            typeof(ProxyManager).GetMethod(nameof(ProxyManager.GetMethodProxy))!);
+            ProxyManagerMeta.Methods.GetMethodProxy);
         gettingMethodCode.Emit(OpCodes.Ret);
         
         var gettingProperty = classBuilder.DefineMethod("_prism_GetPropertyProxy",
@@ -416,10 +429,10 @@ public partial class DynamicGenerator
         gettingPropertyCode.Emit(OpCodes.Ldarg_0);
         // Load manager.
         gettingPropertyCode.Emit(OpCodes.Ldfld, managerField);
-        // Load argument of MethodInfo.
+        // Load argument of PropertyInfo.
         gettingPropertyCode.Emit(OpCodes.Ldarg_1);
         gettingPropertyCode.Emit(OpCodes.Callvirt, 
-            typeof(ProxyManager).GetMethod(nameof(ProxyManager.GetPropertyProxy))!);
+            ProxyManagerMeta.Methods.GetPropertyProxy);
         gettingPropertyCode.Emit(OpCodes.Ret);
     }
 }
