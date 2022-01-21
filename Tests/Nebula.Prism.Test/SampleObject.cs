@@ -9,7 +9,12 @@ namespace Nebula.Prism.Test
 {
     public class SampleObject
     {
-        public int Number;
+        [Refraction]
+        public virtual int Number
+        {
+            get;
+            set;
+        }
 
         public SampleObject()
         {
@@ -39,6 +44,7 @@ namespace Nebula.Prism.Test
         
         public object TestParams(params object[] arguments)
         {
+            var a = this.GetType().GetProperty("Number");
             return 3;
         }
 
