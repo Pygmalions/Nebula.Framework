@@ -60,7 +60,7 @@ public class DecoratedMethod : IExtensibleMethod
             return context.ReturningValue;
         }
         if (!context.Skipped)
-            context.ReturningValue = ProxiedMethod.Invoke(ProxiedHolder, arguments);
+            context.ReturningValue = ProxiedMethod.Invoke(ProxiedHolder, context.Arguments);
         else if (context.ReturningValue == null && !NullReturnAccepted)
             throw new Exception("Proxied method invocation skipped without acceptable return value.");
         

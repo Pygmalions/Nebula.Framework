@@ -96,7 +96,7 @@ public class PropertyProxyEntry : IExtensibleProperty
             throw context.ThrowingException;
     }
     
-    public void TriggerSetting(AccessContext context)
+    public void TriggerSettingEvent(AccessContext context)
     {
         Parallel.ForEach(_settingHandlers, action => action.Invoke(context));
         if (context.ThrowingException != null)

@@ -22,14 +22,16 @@ public partial class DynamicGenerator
     private static MethodBuilder RefractPropertySetter(
         TypeBuilder classBuilder, FieldInfo proxyField, PropertyInfo property, int proxyId)
     {
+        if (proxyField == null) throw new ArgumentNullException(nameof(proxyField));
+        var baseMethod = property.GetSetMethod();
+        if (baseMethod == null) throw new Exception("Property to refract has no setter.");
         var proxyMethod = classBuilder.DefineMethod($"_prism_{proxyId}_set_{property.Name}",
-            MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.NewSlot |
-            MethodAttributes.SpecialName | MethodAttributes.Virtual,
-            CallingConventions.Standard, null, new []{property.PropertyType});
+            baseMethod.Attributes,
+            baseMethod.CallingConvention, baseMethod.ReturnType, new []{property.PropertyType});
         var attributeBuilder = new CustomAttributeBuilder(
             GenerationAttributeMeta.Constructors.Default, Array.Empty<object>());
         proxyMethod.SetCustomAttribute(attributeBuilder);
-        // classBuilder.DefineMethodOverride(proxyMethod, property.GetSetMethod()!);
+        classBuilder.DefineMethodOverride(proxyMethod, baseMethod);
         
         #region Code
         
@@ -41,10 +43,10 @@ public partial class DynamicGenerator
         
         code.Emit(OpCodes.Ldarg_1);
         if (property.PropertyType.IsValueType)
-            code.Emit(OpCodes.Box, typeof(object));
+            code.Emit(OpCodes.Box, property.PropertyType);
         // Pop the argument and store it into local variable 0.
-        code.DeclareLocal(typeof(object));
-        code.Emit(OpCodes.Stloc_0);
+        var accessingValue = code.DeclareLocal(typeof(object));
+        code.Emit(OpCodes.Stloc, accessingValue);
         
         #endregion
         
@@ -52,10 +54,10 @@ public partial class DynamicGenerator
         
         code.Emit(OpCodes.Ldarg_0);     // this
         code.Emit(OpCodes.Ldfld, proxyField);
-        code.Emit(OpCodes.Ldloc_0);     // object
+        code.Emit(OpCodes.Ldloc, accessingValue);     // object
         code.Emit(OpCodes.Newobj, AccessContextMeta.Constructors.ObjectArgument);
-        code.DeclareLocal(AccessContextMeta.ClassType);
-        code.Emit(OpCodes.Stloc_1);
+        var context = code.DeclareLocal(AccessContextMeta.ClassType);
+        code.Emit(OpCodes.Stloc, context);
         
         #endregion
         
@@ -63,7 +65,7 @@ public partial class DynamicGenerator
         
         code.Emit(OpCodes.Ldarg_0);                 // this
         code.Emit(OpCodes.Ldfld, proxyField);       // PropertyProxyEntry
-        code.Emit(OpCodes.Ldloc_1);                 // AccessContext
+        code.Emit(OpCodes.Ldloc, context);                 // AccessContext
         code.Emit(OpCodes.Call, PropertyProxyEntryMeta.Methods.TriggerSettingEvent);
         
         #endregion
@@ -71,30 +73,34 @@ public partial class DynamicGenerator
         #region Check skipped and interrupted flags.
         
         // Check interrupted.
-        code.Emit(OpCodes.Ldloc_1);
+        code.Emit(OpCodes.Ldloc, context);
         code.Emit(OpCodes.Call, AccessContextMeta.Properties.Interrupted.Get);
         code.Emit(OpCodes.Brtrue, labelEnd);
         // Check skipped.
-        code.Emit(OpCodes.Ldloc_1);
+        code.Emit(OpCodes.Ldloc, context);
         code.Emit(OpCodes.Call, AccessContextMeta.Properties.Skipped.Get);
         code.Emit(OpCodes.Brtrue, labelPostprocessing);
-        //
+        
         #endregion
         
         #region Invoke property setter.
         
-        code.Emit(OpCodes.Ldarg_1);
-        code.Emit(OpCodes.Call, property.GetSetMethod()!);
-
+        code.Emit(OpCodes.Ldarg_0);
+        code.Emit(OpCodes.Ldloc, context);
+        code.Emit(OpCodes.Call, AccessContextMeta.Properties.AccessingValue.Get);
+        if (property.PropertyType.IsValueType)
+            code.Emit(OpCodes.Unbox_Any, property.PropertyType);
+        code.Emit(OpCodes.Call, baseMethod);
+        
         #endregion
         
-        // #region Trigger after setting event.
+        #region Trigger after setting event.
         code.MarkLabel(labelPostprocessing);
         code.Emit(OpCodes.Ldarg_0);             // this
         code.Emit(OpCodes.Ldfld, proxyField);   // GeneratedExtensibleProperty
-        code.Emit(OpCodes.Ldloc_1);             // AccessContext
+        code.Emit(OpCodes.Ldloc, context);             // AccessContext
         code.Emit(OpCodes.Call, PropertyProxyEntryMeta.Methods.TriggerAfterSettingEvent);
-        // #endregion
+        #endregion
         
         #region Return.
         code.MarkLabel(labelEnd);
@@ -110,14 +116,15 @@ public partial class DynamicGenerator
         TypeBuilder classBuilder, FieldBuilder proxyField, PropertyInfo property, int proxyId)
     {
         if (proxyField == null) throw new ArgumentNullException(nameof(proxyField));
+        var baseMethod = property.GetGetMethod();
+        if (baseMethod == null) throw new Exception("Property to refract has no getter.");
         var proxyMethod = classBuilder.DefineMethod($"_prism_{proxyId}_get_{property.Name}",
-            MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.NewSlot |
-            MethodAttributes.SpecialName | MethodAttributes.Virtual,
-            CallingConventions.Standard, property.PropertyType, null);
+            baseMethod.Attributes,
+            baseMethod.CallingConvention, baseMethod.ReturnType, null);
         var attributeBuilder = new CustomAttributeBuilder(
             GenerationAttributeMeta.Constructors.Default, Array.Empty<object>());
         proxyMethod.SetCustomAttribute(attributeBuilder);
-        // classBuilder.DefineMethodOverride(proxyMethod, property.GetGetMethod()!);
+        classBuilder.DefineMethodOverride(proxyMethod, baseMethod);
         
         #region Code
         
@@ -125,14 +132,14 @@ public partial class DynamicGenerator
         var labelPostprocessing = code.DefineLabel();
         var labelEnd = code.DefineLabel();
 
-        #region Local variable 1 : access context.
+        #region Initialize context.
         
         code.Emit(OpCodes.Ldarg_0);     // this
         code.Emit(OpCodes.Ldfld, proxyField);
         code.Emit(OpCodes.Ldnull);
         code.Emit(OpCodes.Newobj, AccessContextMeta.Constructors.ObjectArgument);
-        code.DeclareLocal(AccessContextMeta.ClassType);
-        code.Emit(OpCodes.Stloc_1);
+        var context = code.DeclareLocal(AccessContextMeta.ClassType);
+        code.Emit(OpCodes.Stloc, context);
         
         #endregion
         
@@ -140,7 +147,7 @@ public partial class DynamicGenerator
         
         code.Emit(OpCodes.Ldarg_0);                 // this
         code.Emit(OpCodes.Ldfld, proxyField);       // PropertyProxyEntry
-        code.Emit(OpCodes.Ldloc_1);                 // AccessContext
+        code.Emit(OpCodes.Ldloc, context);                 // AccessContext
         code.Emit(OpCodes.Call, PropertyProxyEntryMeta.Methods.TriggerGettingEvent);
         
         #endregion
@@ -148,41 +155,41 @@ public partial class DynamicGenerator
         #region Check skipped and interrupted flags.
         
         // Check interrupted.
-        code.Emit(OpCodes.Ldloc_1);
+        code.Emit(OpCodes.Ldloc, context);
         code.Emit(OpCodes.Call, AccessContextMeta.Properties.Interrupted.Get);
         code.Emit(OpCodes.Brtrue, labelEnd);
         // Check skipped.
-        code.Emit(OpCodes.Ldloc_1);
+        code.Emit(OpCodes.Ldloc, context);
         code.Emit(OpCodes.Call, AccessContextMeta.Properties.Skipped.Get);
         code.Emit(OpCodes.Brtrue, labelPostprocessing);
-        //
-        #endregion
-        
-        #region Local varaible 2: returning value from invoking proxied method.
-        
-        code.Emit(OpCodes.Ldarg_1);
-        code.Emit(OpCodes.Call, property.GetSetMethod()!);
-        code.DeclareLocal(property.PropertyType);
-        code.Emit(OpCodes.Stloc_2);
-        code.Emit(OpCodes.Ldloc_1);     // access context
-        code.Emit(OpCodes.Ldloc_2);     // accessing value
-        if (property.PropertyType.IsValueType)
-            code.Emit(OpCodes.Box, property.PropertyType);
-        code.Emit(OpCodes.Callvirt, AccessContextMeta.Properties.AccessingValue.Set);
 
         #endregion
         
-        // #region Trigger invoked event.
+        #region Invoke proxied getter and store the return value.
+        
+        code.Emit(OpCodes.Ldarg_0);
+        code.Emit(OpCodes.Call, baseMethod);
+        var returningValue = code.DeclareLocal(property.PropertyType);
+        code.Emit(OpCodes.Stloc, returningValue);
+        code.Emit(OpCodes.Ldloc, context);     // access context
+        code.Emit(OpCodes.Ldloc, returningValue);     // accessing value
+        if (property.PropertyType.IsValueType)
+            code.Emit(OpCodes.Box, property.PropertyType);
+        code.Emit(OpCodes.Call, AccessContextMeta.Properties.AccessingValue.Set);
+        
+        #endregion
+        
+        #region Trigger invoked event.
         code.MarkLabel(labelPostprocessing);
         code.Emit(OpCodes.Ldarg_0);             // this
         code.Emit(OpCodes.Ldfld, proxyField);   // GeneratedExtensibleProperty
-        code.Emit(OpCodes.Ldloc_1);             // AccessContext
+        code.Emit(OpCodes.Ldloc, context);      // AccessContext
         code.Emit(OpCodes.Call, PropertyProxyEntryMeta.Methods.TriggerAfterGettingEvent);
-        // #endregion
+        #endregion
         
         #region Return.
         code.MarkLabel(labelEnd);
-        code.Emit(OpCodes.Ldloc_1);
+        code.Emit(OpCodes.Ldloc, context);
         code.Emit(OpCodes.Call, AccessContextMeta.Properties.AccessingValue.Get);
         if (property.PropertyType.IsValueType)
             code.Emit(OpCodes.Unbox_Any, property.PropertyType);
@@ -234,8 +241,8 @@ public partial class DynamicGenerator
             code.Emit(OpCodes.Stelem_Ref);
         }
         // Pop the arguments array and store it into local variable 0.
-        code.DeclareLocal(ObjectArrayMeta.ClassType);
-        code.Emit(OpCodes.Stloc_0);
+        var arguments = code.DeclareLocal(ObjectArrayMeta.ClassType);
+        code.Emit(OpCodes.Stloc, arguments);
         
         #endregion
         
@@ -243,10 +250,10 @@ public partial class DynamicGenerator
         
         code.Emit(OpCodes.Ldarg_0);     // this
         code.Emit(OpCodes.Ldfld, proxyField); 
-        code.Emit(OpCodes.Ldloc_0);     // object?[]
+        code.Emit(OpCodes.Ldloc, arguments);     // object?[]
         code.Emit(OpCodes.Newobj, InvocationContextMeta.Constructors.ObjectArguments);
-        code.DeclareLocal(InvocationContextMeta.ClassType);
-        code.Emit(OpCodes.Stloc_1);
+        var context = code.DeclareLocal(InvocationContextMeta.ClassType);
+        code.Emit(OpCodes.Stloc, context);
         
         #endregion
         
@@ -254,19 +261,27 @@ public partial class DynamicGenerator
         
         code.Emit(OpCodes.Ldarg_0);             // this
         code.Emit(OpCodes.Ldfld, proxyField);   // GeneratedExtensibleMethod
-        code.Emit(OpCodes.Ldloc_1);             // InvocationContext
+        code.Emit(OpCodes.Ldloc, context);             // InvocationContext
         code.Emit(OpCodes.Call, MethodProxyEntryMeta.Methods.TriggerInvoking);
+        
+        #endregion
+        
+        #region Update context arguments.
+        
+        code.Emit(OpCodes.Ldloc, context);
+        code.Emit(OpCodes.Call, InvocationContextMeta.Properties.Arguments.Get);
+        code.Emit(OpCodes.Stloc, arguments);
         
         #endregion
         
         #region Check skipped and interrupted flags.
         
         // Check interrupted.
-        code.Emit(OpCodes.Ldloc_1);
+        code.Emit(OpCodes.Ldloc, context);
         code.Emit(OpCodes.Call, InvocationContextMeta.Properties.Interrupted.Get);
         code.Emit(OpCodes.Brtrue, labelEnd);
         // Check skipped.
-        code.Emit(OpCodes.Ldloc_1);
+        code.Emit(OpCodes.Ldloc, context);
         code.Emit(OpCodes.Call, InvocationContextMeta.Properties.Skipped.Get);
         code.Emit(OpCodes.Brtrue, labelPostprocessing);
         //
@@ -274,17 +289,22 @@ public partial class DynamicGenerator
         
         #region Local varaible 2: returning value from invoking proxied method.
         
-        for (var parameterIndex = 0; parameterIndex <= methodParameters.Length; ++parameterIndex)
+        code.Emit(OpCodes.Ldarg_0);
+        for (var parameterIndex = 0; parameterIndex < methodParameters.Length; ++parameterIndex)
         {
-            code.Emit(OpCodes.Ldarg, parameterIndex);
+            code.Emit(OpCodes.Ldloc, arguments);
+            code.Emit(OpCodes.Ldc_I4, parameterIndex);
+            code.Emit(OpCodes.Ldelem_Ref);
+            if (methodParameters[parameterIndex].ParameterType.IsValueType)
+                code.Emit(OpCodes.Unbox_Any, methodParameters[parameterIndex].ParameterType);
         }
         code.Emit(OpCodes.Call, baseMethod);
         if (baseMethod.DeclaringType != typeof(void))
         {
-            code.DeclareLocal(baseMethod.ReturnType);
-            code.Emit(OpCodes.Stloc_2);
-            code.Emit(OpCodes.Ldloc_1);     // InvocationContext
-            code.Emit(OpCodes.Ldloc_2);     // returning value
+            var returningValue = code.DeclareLocal(baseMethod.ReturnType);
+            code.Emit(OpCodes.Stloc, returningValue);
+            code.Emit(OpCodes.Ldloc, context);     // InvocationContext
+            code.Emit(OpCodes.Ldloc, returningValue);     // returning value
             if (baseMethod.ReturnType.IsValueType)
                 code.Emit(OpCodes.Box, baseMethod.ReturnType);
             code.Emit(OpCodes.Callvirt, InvocationContextMeta.Properties.ReturningValue.Set);
@@ -292,19 +312,19 @@ public partial class DynamicGenerator
 
         #endregion
         
-        // #region Trigger invoked event.
+        #region Trigger invoked event.
         code.MarkLabel(labelPostprocessing);
         code.Emit(OpCodes.Ldarg_0);             // this
         code.Emit(OpCodes.Ldfld, proxyField);   // GeneratedExtensibleMethod
-        code.Emit(OpCodes.Ldloc_1);             // InvocationContext
+        code.Emit(OpCodes.Ldloc, context);             // InvocationContext
         code.Emit(OpCodes.Call, MethodProxyEntryMeta.Methods.TriggerInvoked);
-        // #endregion
+        #endregion
         
         #region Return value.
         code.MarkLabel(labelEnd);
         if (baseMethod.ReturnType != typeof(void))
         {
-            code.Emit(OpCodes.Ldloc_1);
+            code.Emit(OpCodes.Ldloc, context);
             code.Emit(OpCodes.Call, InvocationContextMeta.Properties.ReturningValue.Get);
             if (baseMethod.ReturnType.IsValueType)
                 code.Emit(OpCodes.Unbox_Any, baseMethod.ReturnType);

@@ -9,43 +9,23 @@ namespace Nebula.Prism.Test
 {
     public class SampleObject
     {
+        private int _number;
+        
         [Refraction]
         public virtual int Number
         {
-            get;
-            set;
+            get => _number;
+            set => _number = value;
         }
 
         public SampleObject()
         {
-            Number = -1;
+            _number = -1;
         }
 
-        private int A = 3;
-        
-        public SampleObject(int number, int a, int b, int c)
+        public SampleObject(int number)
         {
-            Number = number;
-        }
-
-        public int Test(int a, int b, ProxyManager c, int d)
-        {
-            var x = new object();
-            var u = (int)(TestParams(a, b, c, x, A));
-            if (u == 3)
-            {
-                u = 2;
-            }
-
-            var s = Ads;
-            Ads = 12;
-            return u;
-        }
-        
-        public object TestParams(params object[] arguments)
-        {
-            var a = this.GetType().GetProperty("Number");
-            return 3;
+            _number = number;
         }
 
         [Refraction]
@@ -53,12 +33,6 @@ namespace Nebula.Prism.Test
         {
             Number += increment;
             return Number;
-        }
-
-        public virtual int Ads
-        {
-            get;
-            set;
         }
     }
 }

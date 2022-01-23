@@ -143,10 +143,10 @@ public partial class DynamicGenerator
                 ClassType.GetMethod(nameof(PropertyProxyEntry.TriggerAfterGettingEvent))!;
             
             public static readonly MethodInfo TriggerSettingEvent =
-                ClassType.GetMethod(nameof(PropertyProxyEntry.TriggerGettingEvent))!;
+                ClassType.GetMethod(nameof(PropertyProxyEntry.TriggerSettingEvent))!;
 
             public static readonly MethodInfo TriggerAfterSettingEvent =
-                ClassType.GetMethod(nameof(PropertyProxyEntry.TriggerAfterGettingEvent))!;
+                ClassType.GetMethod(nameof(PropertyProxyEntry.TriggerAfterSettingEvent))!;
         }
     }
 
@@ -183,6 +183,11 @@ public partial class DynamicGenerator
                     ClassType.GetProperty(nameof(InvocationContext.ReturningValue))!.SetMethod!;
             }
 
+            public static class Arguments
+            {
+                public static readonly MethodInfo Get =
+                    ClassType.GetProperty(nameof(InvocationContext.Arguments))!.GetMethod!;
+            }
         }
     }
 
