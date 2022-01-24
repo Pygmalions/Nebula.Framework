@@ -1,11 +1,4 @@
-﻿using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using Nebula.Proxying;
-using Nebula.Proxying.Utilities;
-using NUnit.Framework;
-
-namespace Nebula.Prism.Test
+﻿namespace Nebula.Prism.Test
 {
     public class SampleObject
     {

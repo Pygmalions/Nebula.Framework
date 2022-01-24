@@ -174,7 +174,7 @@ public class DynamicGeneratorTest
                 gettingValue = number;
             context.AccessingValue = 10;
         };
-        var result = testSample.Number;
+        var result = testSample!.Number;
         Assert.True(gettingTriggered);
         Assert.AreEqual(10, result);
         Assert.AreEqual(-1, gettingValue);

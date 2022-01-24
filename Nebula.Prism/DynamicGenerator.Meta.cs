@@ -38,7 +38,7 @@ public partial class DynamicGenerator
 
         public static class Methods
         {
-            public static readonly MethodInfo GetType =
+            public static readonly MethodInfo GetTypeHandle =
                 ClassType.GetMethod(nameof(object.GetType))!;
         }
     }

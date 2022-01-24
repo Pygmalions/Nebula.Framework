@@ -387,7 +387,7 @@ public partial class DynamicGenerator
         var localHolderType = constructorCode.DeclareLocal(typeof(Type));
         constructorCode.Emit(OpCodes.Ldarg_0);
         constructorCode.Emit(OpCodes.Call, 
-            ObjectMeta.Methods.GetType);
+            ObjectMeta.Methods.GetTypeHandle);
         constructorCode.Emit(OpCodes.Stloc, localHolderType);
         foreach (var (proxyField, setter, getter, property) in propertyProxies)
         {
