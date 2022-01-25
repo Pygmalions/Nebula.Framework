@@ -16,7 +16,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\Nebula.Prism\Nebula.Prism.csproj" />
-        <ProjectReference Include="..\..\Nebula.Prism.Dynamic\Nebula.Prism.Dynamic.csproj" />
         <ProjectReference Include="..\..\Nebula.Proxying\Nebula.Proxying.csproj" />
     </ItemGroup>
 </Project>

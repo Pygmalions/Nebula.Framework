@@ -7,9 +7,6 @@ namespace Nebula.Prism;
 
 public partial class DynamicGenerator
 {
-    public static readonly DynamicGenerator GlobalInstance = new(
-        Assembly.GetExecutingAssembly().GetName().Name + ".Prism", "Refractions");
-
     private readonly ModuleBuilder _module;
     
     private readonly ConcurrentDictionary<Type, Type> _refractions = new();

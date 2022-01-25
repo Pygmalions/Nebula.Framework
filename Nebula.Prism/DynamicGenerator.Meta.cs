@@ -14,9 +14,6 @@ public partial class DynamicGenerator
             public static readonly MethodInfo GetProperty =
                 ClassType.GetMethod(nameof(Type.GetProperty),
                     new[] { typeof(string) })!;
-            public static readonly MethodInfo GetMethod =
-                ClassType.GetMethod(nameof(Type.GetProperty),
-                    new[] { typeof(string) })!;
         }
     }
     
@@ -176,11 +173,12 @@ public partial class DynamicGenerator
 
             public static class ReturningValue
             {
-                public static readonly MethodInfo Get =
-                    ClassType.GetProperty(nameof(InvocationContext.ReturningValue))!.GetMethod!;
+                public static readonly PropertyInfo Property =
+                    ClassType.GetProperty(nameof(InvocationContext.ReturningValue))!;
+                
+                public static readonly MethodInfo Get = Property.GetMethod!;
 
-                public static readonly MethodInfo Set =
-                    ClassType.GetProperty(nameof(InvocationContext.ReturningValue))!.SetMethod!;
+                public static readonly MethodInfo Set = Property.SetMethod!;
             }
 
             public static class Arguments
@@ -217,11 +215,14 @@ public partial class DynamicGenerator
 
             public static class AccessingValue
             {
+                public static readonly PropertyInfo Property =
+                    ClassType.GetProperty(nameof(AccessContext.AccessingValue))!;
+                
                 public static readonly MethodInfo Get =
-                    ClassType.GetProperty(nameof(AccessContext.AccessingValue))!.GetMethod!;
+                    Property.GetMethod!;
 
                 public static readonly MethodInfo Set =
-                    ClassType.GetProperty(nameof(AccessContext.AccessingValue))!.SetMethod!;
+                    Property.SetMethod!;
             }
         }
     }

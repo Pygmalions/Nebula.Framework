@@ -13,7 +13,7 @@ public class DynamicGeneratorTest
         Type? refraction = null;
         Assert.DoesNotThrow(() =>
         {
-            refraction = DynamicGenerator.GlobalInstance.GetRefraction<SampleObject>();
+            refraction = RefractionGenerator.Get<SampleObject>();
         });
         Assert.NotNull(refraction);
         Assert.DoesNotThrow(() => Activator.CreateInstance(refraction!));
@@ -22,7 +22,7 @@ public class DynamicGeneratorTest
     [Test]
     public void InterfaceCompleteness()
     {
-        var refraction = DynamicGenerator.GlobalInstance.GetRefraction<SampleObject>();
+        var refraction = RefractionGenerator.Get<SampleObject>();
         var testSample = Activator.CreateInstance(refraction) as SampleObject;
         Assert.NotNull(testSample);
         var provider = testSample as IProxiedObject;
@@ -32,7 +32,7 @@ public class DynamicGeneratorTest
     [Test]
     public void GetFunctionProxy()
     {
-        var refraction = DynamicGenerator.GlobalInstance.GetRefraction<SampleObject>();
+        var refraction = RefractionGenerator.Get<SampleObject>();
         var testSample = Activator.CreateInstance(refraction) as SampleObject;
         Assert.NotNull(testSample);
         // Verify constructor function (change the Number from default 0 to -1).
@@ -47,7 +47,7 @@ public class DynamicGeneratorTest
     [Test]
     public void GetPropertyProxy()
     {
-        var refraction = DynamicGenerator.GlobalInstance.GetRefraction<SampleObject>();
+        var refraction = RefractionGenerator.Get<SampleObject>();
         var testSample = Activator.CreateInstance(refraction) as SampleObject;
         Assert.NotNull(testSample);
         // Verify constructor function (change the Number from default 0 to -1).
@@ -62,7 +62,7 @@ public class DynamicGeneratorTest
     [Test]
     public void ProxiedProperty()
     {
-        var refraction = DynamicGenerator.GlobalInstance.GetRefraction<SampleObject>();
+        var refraction = RefractionGenerator.Get<SampleObject>();
         var testSample = Activator.CreateInstance(refraction) as SampleObject;
         Assert.NotNull(testSample);
         var number = testSample!.Number;
@@ -74,7 +74,7 @@ public class DynamicGeneratorTest
     [Test]
     public void ProxiedMethod()
     {
-        var refraction = DynamicGenerator.GlobalInstance.GetRefraction<SampleObject>();
+        var refraction = RefractionGenerator.Get<SampleObject>();
         var testSample = Activator.CreateInstance(refraction) as SampleObject;
         Assert.NotNull(testSample);
         var number = testSample!.Number;
@@ -85,7 +85,7 @@ public class DynamicGeneratorTest
     [Test]
     public void MethodProxyFunction()
     {
-        var refraction = DynamicGenerator.GlobalInstance.GetRefraction<SampleObject>();
+        var refraction = RefractionGenerator.Get<SampleObject>();
         var testSample = Activator.CreateInstance(refraction) as SampleObject;
         Assert.NotNull(testSample);
         var provider = testSample as IProxiedObject;
@@ -122,7 +122,7 @@ public class DynamicGeneratorTest
     [Test]
     public void PropertyProxySettingFunction()
     {
-        var refraction = DynamicGenerator.GlobalInstance.GetRefraction<SampleObject>();
+        var refraction = RefractionGenerator.Get<SampleObject>();
         var testSample = Activator.CreateInstance(refraction) as SampleObject;
         Assert.NotNull(testSample);
         var provider = testSample as IProxiedObject;
@@ -153,7 +153,7 @@ public class DynamicGeneratorTest
     [Test]
     public void PropertyProxyGettingFunction()
     {
-        var refraction = DynamicGenerator.GlobalInstance.GetRefraction<SampleObject>();
+        var refraction = RefractionGenerator.Get<SampleObject>();
         var testSample = Activator.CreateInstance(refraction) as SampleObject;
         Assert.NotNull(testSample);
         var provider = testSample as IProxiedObject;
