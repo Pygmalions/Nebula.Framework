@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Injecting.Test", "Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Proxying.Test", "Tests\Nebula.Proxying.Test\Nebula.Proxying.Test.csproj", "{74180737-65BD-46C2-993B-EA68855845F8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleApplication", "Tests\SampleApplication\SampleApplication.csproj", "{5F85CAAE-C77C-4444-8512-BC7783BDAE85}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,10 @@ Global
 		{74180737-65BD-46C2-993B-EA68855845F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74180737-65BD-46C2-993B-EA68855845F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74180737-65BD-46C2-993B-EA68855845F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F85CAAE-C77C-4444-8512-BC7783BDAE85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F85CAAE-C77C-4444-8512-BC7783BDAE85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F85CAAE-C77C-4444-8512-BC7783BDAE85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F85CAAE-C77C-4444-8512-BC7783BDAE85}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -87,5 +93,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{A880FD4E-63B0-4081-B4B5-D6C06BA72858} = {871EC9F6-76F2-48BF-A447-3ADF4E6A630C}
 		{74180737-65BD-46C2-993B-EA68855845F8} = {871EC9F6-76F2-48BF-A447-3ADF4E6A630C}
+		{5F85CAAE-C77C-4444-8512-BC7783BDAE85} = {871EC9F6-76F2-48BF-A447-3ADF4E6A630C}
 	EndGlobalSection
 EndGlobal
