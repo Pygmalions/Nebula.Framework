@@ -78,6 +78,9 @@ public static class PresetHelper
                                 $"{nameof(PresetAttribute)} to enable member presets scanning.");
         presetAttribute.ScanMemberPresets(presetType);
 
+        if (presetAttribute.PropertyPresets == null)
+            return new Dictionary<string, IPreset>();
+        
         foreach (var (name, member) in presetAttribute.PropertyPresets)
         {
             switch (member)

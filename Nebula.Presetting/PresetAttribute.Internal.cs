@@ -7,7 +7,7 @@ public partial class PresetAttribute
 {
     internal bool Scanned { get; private set; }
     internal MemberInfo? ContentPreset { get; private set; }
-    internal IReadOnlyDictionary<string, MemberInfo> PropertyPresets { get; private set; }
+    internal IReadOnlyDictionary<string, MemberInfo>? PropertyPresets { get; private set; }
 
     internal void ScanMemberPresets(Type type)
     {
