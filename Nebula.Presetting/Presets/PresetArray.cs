@@ -11,4 +11,9 @@ public class PresetArray<TItem> : IArray<TItem>
     {
         return Items.Select(preset => preset.Translate()).ToArray();
     }
+
+    public PresetArray(params IItem<TItem>[] items)
+    {
+        Items = new List<IItem<TItem>>(items);
+    }
 }
