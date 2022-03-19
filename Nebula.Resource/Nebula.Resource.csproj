@@ -4,6 +4,16 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <PackageVersion>0.1.0</PackageVersion>
+        <Title>Nebula Resource</Title>
+        <Authors>Nebula</Authors>
+        <Description>This library provides resource and resource related mechanism.</Description>
+        <Copyright>MIT License.</Copyright>
+        <PackageProjectUrl>https://github.com/NebulaCommittee</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/NebulaCommittee/Nebula.Framework/blob/main/LICENSE</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/NebulaCommittee/Nebula.Framework</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>Nebula;</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>

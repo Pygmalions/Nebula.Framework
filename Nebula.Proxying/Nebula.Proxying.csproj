@@ -5,6 +5,16 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>Nebula.Proxying</RootNamespace>
+        <PackageVersion>0.1.0</PackageVersion>
+        <Title>Nebula Proxying</Title>
+        <Authors>Nebula</Authors>
+        <Description>This library provides the proxy mechanism which allows you to dynamically change the behaviour of a proxied method. It also includes a proxy generator to generate proxy class which supports the proxy function.</Description>
+        <Copyright>MIT License.</Copyright>
+        <PackageProjectUrl>https://github.com/NebulaCommittee</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/NebulaCommittee/Nebula.Framework/blob/main/LICENSE</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/NebulaCommittee/Nebula.Framework</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>Nebula;</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>
