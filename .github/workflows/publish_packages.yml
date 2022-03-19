@@ -30,49 +30,49 @@ jobs:
       uses: brandedoutcast/publish-nuget@v2.5.5
       with:
         PROJECT_FILE_PATH: Nebula.Core/Nebula.Core.csproj
-        NUGET_KEY: ${{ secrets.GITHUB_TOKEN }
+        NUGET_KEY: ${{ secrets.GITHUB_TOKEN }}
         NUGET_SOURCE: github
         
     - name: Publish Exceptions
       uses: brandedoutcast/publish-nuget@v2.5.5
       with:
         PROJECT_FILE_PATH: Nebula.Exceptions/Nebula.Exceptions.csproj
-        NUGET_KEY: ${{ secrets.GITHUB_TOKEN }
+        NUGET_KEY: ${{ secrets.GITHUB_TOKEN }}
         NUGET_SOURCE: github
         
     - name: Publish Extending
       uses: brandedoutcast/publish-nuget@v2.5.5
       with:
         PROJECT_FILE_PATH: Nebula.Extending/Nebula.Extending.csproj
-        NUGET_KEY: ${{ secrets.GITHUB_TOKEN }
+        NUGET_KEY: ${{ secrets.GITHUB_TOKEN }}
         NUGET_SOURCE: github
         
     - name: Publish Injecting
       uses: brandedoutcast/publish-nuget@v2.5.5
       with:
         PROJECT_FILE_PATH: Nebula.Injecting/Nebula.Injecting.csproj
-        NUGET_KEY: ${{ secrets.GITHUB_TOKEN }
+        NUGET_KEY: ${{ secrets.GITHUB_TOKEN }}
         NUGET_SOURCE: github
         
     - name: Publish Presetting
       uses: brandedoutcast/publish-nuget@v2.5.5
       with:
         PROJECT_FILE_PATH: Nebula.Presetting/Nebula.Presetting.csproj
-        NUGET_KEY: ${{ secrets.GITHUB_TOKEN }
+        NUGET_KEY: ${{ secrets.GITHUB_TOKEN }}
         NUGET_SOURCE: github
         
     - name: Publish Proxying
       uses: brandedoutcast/publish-nuget@v2.5.5
       with:
         PROJECT_FILE_PATH: Nebula.Proxying/Nebula.Proxying.csproj
-        NUGET_KEY: ${{ secrets.GITHUB_TOKEN }
+        NUGET_KEY: ${{ secrets.GITHUB_TOKEN }}
         NUGET_SOURCE: github
         
     - name: Publish Resource
       uses: brandedoutcast/publish-nuget@v2.5.5
       with:
         PROJECT_FILE_PATH: Nebula.Resource/Nebula.Resource.csproj
-        NUGET_KEY: ${{ secrets.GITHUB_TOKEN }
+        NUGET_KEY: ${{ secrets.GITHUB_TOKEN }}
         NUGET_SOURCE: github
     
     
