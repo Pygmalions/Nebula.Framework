@@ -9,7 +9,7 @@ on:
     tags: v**
 
 jobs:
-  build:
+  Publish:
 
     runs-on: ubuntu-latest
 
@@ -23,11 +23,11 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build -c Release --no-restore
-    - name: Test
-      run: dotnet test -c Release --no-build --verbosity normal
     - name: Pack
       run: dotnet pack --configuration Release -o Packages/Release
-    - name: Publish
+    - name: Add Github Source
       run: 
         dotnet nuget add source --username NebulaCommittee --password ${{ secrets.ACTION_PAT }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/NebulaCommittee/index.json"
+    - name: Publish
+      run:
         dotnet nuget push "Packages/Release/*.nupkg" --api-key ${{ secrets.ACTION_PAT }} --source "github" --skip-duplicate
