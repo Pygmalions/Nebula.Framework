@@ -11,11 +11,13 @@ public abstract class Source
         if (_container != null)
             throw new UserError("A source can not be added to more than one container.");
         _container = container;
+        OnInstall(container);
     }
 
     internal void Uninstall()
     {
         _container = null;
+        OnUninstall();
     }
 
     public abstract object? Acquire(Type type, IIdentifier identifier);
