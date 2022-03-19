@@ -28,4 +28,4 @@ jobs:
     - name: Pack
       run: dotnet pack --configuration Release -o Packages/Release
     - name: Publish
-      run: dotnet nuget push "Packages/Release/*.nupkg" --api-key ${{ secrets.ACTION_PAT }} --source "github"
+      run: dotnet nuget push "Packages/Release/*.nupkg" --api-key ${{ secrets.ACTION_PAT }} --source "github" --skip-duplicate
