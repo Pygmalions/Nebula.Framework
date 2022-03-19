@@ -10,7 +10,6 @@
         <Description>This library provides a model to allow users to develop their program which are consits of entities and components.</Description>
         <Copyright>MIT License.</Copyright>
         <PackageProjectUrl>https://github.com/NebulaCommittee</PackageProjectUrl>
-        <PackageLicenseUrl>https://github.com/NebulaCommittee/Nebula.Framework/blob/main/LICENSE</PackageLicenseUrl>
         <RepositoryUrl>https://github.com/NebulaCommittee/Nebula.Framework</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageTags>Nebula; Nebula.Models;</PackageTags>

@@ -10,7 +10,6 @@
         <Description>An exception types and handling mechanism library. Used by many other Nebula libraries.</Description>
         <Copyright>MIT License.</Copyright>
         <PackageProjectUrl>https://github.com/NebulaCommittee</PackageProjectUrl>
-        <PackageLicenseUrl>https://github.com/NebulaCommittee/Nebula.Framework/blob/main/LICENSE</PackageLicenseUrl>
         <RepositoryUrl>https://github.com/NebulaCommittee/Nebula.Framework</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageTags>Nebula;</PackageTags>
