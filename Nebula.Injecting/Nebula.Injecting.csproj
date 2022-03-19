@@ -4,12 +4,10 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>Nebula.Proxying</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Nebula.Exceptions\Nebula.Exceptions.csproj" />
-      <ProjectReference Include="..\Nebula.Extending\Nebula.Extending.csproj" />
+      <ProjectReference Include="..\Nebula.Presetting\Nebula.Presetting.csproj" />
     </ItemGroup>
 
 </Project>
