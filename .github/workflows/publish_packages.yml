@@ -1,10 +1,12 @@
-name: .NET
+name: Publish Packages
 
 on:
   push:
     branches: [ main ]
+    tags: v**
   pull_request:
     branches: [ main ]
+    tags: v**
 
 jobs:
   build:
@@ -23,9 +25,9 @@ jobs:
       run: dotnet build -c Release --no-restore
     - name: Test
       run: dotnet test -c Release --no-build --verbosity normal
-    - name: Add Github Source
-      run: dotnet nuget add source --username NebulaCommittee --password ${{ secrets.ACTION_PAT }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/NebulaCommittee/index.json"
     - name: Pack
       run: dotnet pack --configuration Release -o Packages/Release
     - name: Publish
-      run: dotnet nuget push "Packages/Release/*.nupkg" --api-key ${{ secrets.ACTION_PAT }} --source "github"
+      run: 
+        dotnet nuget add source --username NebulaCommittee --password ${{ secrets.ACTION_PAT }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/NebulaCommittee/index.json"
+        dotnet nuget push "Packages/Release/*.nupkg" --api-key ${{ secrets.ACTION_PAT }} --source "github" --skip-duplicate
