@@ -19,18 +19,6 @@ public partial class PluginRegistry
     public IReadOnlyDictionary<AssemblyName, Assembly> Plugins => _plugins;
 
     /// <summary>
-    /// When a plugin manager is constructed, it can scan all plugin assemblies.
-    /// </summary>
-    /// <param name="scanningRequired">If true, this plugin manager will </param>
-    public PluginRegistry(bool scanningRequired = true)
-    {
-        if (!scanningRequired)
-            return;
-
-        Update();
-    }
-
-    /// <summary>
     /// Rescan all loaded assemblies and update the plugins list.
     /// </summary>
     public void Update()

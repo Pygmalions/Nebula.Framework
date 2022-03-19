@@ -7,7 +7,12 @@ namespace Nebula.Extending;
 public partial class PluginRegistry
 {
     private static Lazy<PluginRegistry> SingletonInstance = 
-        new Lazy<PluginRegistry>(() => new PluginRegistry(true));
+        new(() =>
+        {
+            var registry = new PluginRegistry();
+            registry.Update();
+            return registry;
+        });
 
     /// <summary>
     /// Cached list of found plugins, and it is generated when it or <see cref="UpdateFoundPlugins"/>
