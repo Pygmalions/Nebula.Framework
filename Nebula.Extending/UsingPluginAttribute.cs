@@ -1,4 +1,7 @@
-﻿namespace Nebula.Extending;
+﻿using System;
+using System.Collections.Generic;
+
+namespace Nebula.Extending;
 
 /// <summary>
 /// Inform the Nebula that this assembly will use extern assemblies as its plugins,

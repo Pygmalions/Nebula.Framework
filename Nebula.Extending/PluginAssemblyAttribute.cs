@@ -1,4 +1,6 @@
-﻿namespace Nebula.Extending;
+﻿using System;
+
+namespace Nebula.Extending;
 
 /// <summary>
 /// Nebula in-assembly resource discovery function will only work on assemblies marked with this attribute.
