@@ -28,4 +28,4 @@ jobs:
     - name: Pack
       run: dotnet pack --configuration Release
     - name: Publish
-      run: dotnet nuget push "bin/Release/*.nupkg" --api-key ${{ secrets.ACTION_PAT }} --source "github"
+      run: dotnet nuget push "Nebula.Core/bin/Release/Nebula.Core.0.1.0.nupkg" --api-key ${{ secrets.ACTION_PAT }} --source "github"
