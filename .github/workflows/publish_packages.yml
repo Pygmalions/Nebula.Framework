@@ -23,9 +23,59 @@ jobs:
       run: dotnet build -c Release --no-restore
     - name: Test
       run: dotnet test -c Release --no-build --verbosity normal
-    - name: Add NuGet source
+    - name: Add Github Source
       run: dotnet nuget add source --username NebulaCommittee --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/OWNER/index.json"
-    - name: Pack
-      run: dotnet pack --configuration Release
-    - name: Push
-      run: dotnet nuget push "bin/Release/*.nupkg"  --api-key ${{ secrets.GITHUB_TOKEN }} --source "github" --skip-duplicate
+      
+    - name: Publish Core
+      uses: brandedoutcast/publish-nuget@v2.5.5
+      with:
+        PROJECT_FILE_PATH: Nebula.Core/Nebula.Core.csproj
+        NUGET_KEY: ${{ secrets.GITHUB_TOKEN }
+        NUGET_SOURCE: github
+        
+    - name: Publish Exceptions
+      uses: brandedoutcast/publish-nuget@v2.5.5
+      with:
+        PROJECT_FILE_PATH: Nebula.Exceptions/Nebula.Exceptions.csproj
+        NUGET_KEY: ${{ secrets.GITHUB_TOKEN }
+        NUGET_SOURCE: github
+        
+    - name: Publish Extending
+      uses: brandedoutcast/publish-nuget@v2.5.5
+      with:
+        PROJECT_FILE_PATH: Nebula.Extending/Nebula.Extending.csproj
+        NUGET_KEY: ${{ secrets.GITHUB_TOKEN }
+        NUGET_SOURCE: github
+        
+    - name: Publish Injecting
+      uses: brandedoutcast/publish-nuget@v2.5.5
+      with:
+        PROJECT_FILE_PATH: Nebula.Injecting/Nebula.Injecting.csproj
+        NUGET_KEY: ${{ secrets.GITHUB_TOKEN }
+        NUGET_SOURCE: github
+        
+    - name: Publish Presetting
+      uses: brandedoutcast/publish-nuget@v2.5.5
+      with:
+        PROJECT_FILE_PATH: Nebula.Presetting/Nebula.Presetting.csproj
+        NUGET_KEY: ${{ secrets.GITHUB_TOKEN }
+        NUGET_SOURCE: github
+        
+    - name: Publish Proxying
+      uses: brandedoutcast/publish-nuget@v2.5.5
+      with:
+        PROJECT_FILE_PATH: Nebula.Proxying/Nebula.Proxying.csproj
+        NUGET_KEY: ${{ secrets.GITHUB_TOKEN }
+        NUGET_SOURCE: github
+        
+    - name: Publish Resource
+      uses: brandedoutcast/publish-nuget@v2.5.5
+      with:
+        PROJECT_FILE_PATH: Nebula.Resource/Nebula.Resource.csproj
+        NUGET_KEY: ${{ secrets.GITHUB_TOKEN }
+        NUGET_SOURCE: github
+    
+    
+    
+    
+        
