@@ -40,9 +40,9 @@ public partial class PluginRegistry
 
         // Search assemblies for import targets.
         var allowedNames = new ConcurrentDictionary<string, string>();
-        var selfAssembly = Assembly.GetExecutingAssembly();
-
-        RegisterPlugin(selfAssembly);
+        var selfAssembly = Assembly.GetEntryAssembly();
+        if (selfAssembly != null)
+            RegisterPlugin(selfAssembly);
 
         // Summarize plugins information and register assemblies with plugin attribute.
         foreach (var assembly in loadedAssemblies)
