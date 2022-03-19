@@ -3,10 +3,12 @@ name: Publish Packages
 on:
   push:
     branches: [ main ]
-    tags: v**
+    tags:
+      - v[0-9].[0-9]+.[0-9]+
   pull_request:
     branches: [ main ]
-    tags: v**
+    tags: 
+      - v[0-9].[0-9]+.[0-9]+
 
 jobs:
   Publish:
@@ -19,15 +21,12 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.x
-    - name: Restore dependencies
-      run: dotnet restore
     - name: Build
-      run: dotnet build -c Release --no-restore
-    - name: Pack
-      run: dotnet pack --configuration Release -o Packages/Release
-    - name: Add Github Source
-      run: 
-        dotnet nuget add source --username NebulaCommittee --password ${{ secrets.ACTION_PAT }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/NebulaCommittee/index.json"
+      run: | 
+        dotnet restore
+        dotnet build -c Release --no-restore
+        dotnet pack --configuration Release -o Packages/Release
     - name: Publish
-      run:
+      run: |
+        dotnet nuget add source --username NebulaCommittee --password ${{ secrets.ACTION_PAT }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/NebulaCommittee/index.json"
         dotnet nuget push "Packages/Release/*.nupkg" --api-key ${{ secrets.ACTION_PAT }} --source "github" --skip-duplicate
