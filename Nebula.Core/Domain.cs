@@ -12,16 +12,32 @@ public class Domain : Container
     private static readonly Lazy<Domain> SingletonInstance =
         new(() => new Domain(), LazyThreadSafetyMode.ExecutionAndPublication);
 
+    /// <summary>
+    /// Singleton instance of the current domain.
+    /// </summary>
     public static Domain Current => SingletonInstance.Value;
 
+    private readonly Task _initialization;
+    
     private Domain()
     {
+        _initialization = Task.Run(Initialize);
+    }
+
+    /// <summary>
+    /// Initialize the domain. This will only work once in <see cref="_initialization"/>.
+    /// </summary>
+    /// <exception cref="RuntimeError"></exception>
+    private void Initialize()
+    {
+        if (_initialization.IsCompleted) return;
+        
         // In-assembly source auto discovery.
         foreach (var (_, assembly) in PluginRegistry.FoundPlugins)
         {
             foreach (var candidate in assembly.GetTypes())
             {
-                if (candidate.IsSubclassOf(typeof(Source)))
+                if (!candidate.IsSubclassOf(typeof(Source)))
                     continue;
                 var sourceAttribute = candidate.GetCustomAttribute<SourceAttribute>();
                 if (sourceAttribute == null)
@@ -29,12 +45,15 @@ public class Domain : Container
                 if (candidate.GetConstructor(Type.EmptyTypes) == null)
                     throw new UserError($"Source {candidate.Name} is marked with {nameof(SourceAttribute)} " +
                                         $"but does not have a no-argument constructor.");
-                var source = Activator.CreateInstance(candidate) as Source;
-                if (source == null)
-                    throw new RuntimeError(
-                        $"Failed to construct {candidate.Name} in in-assembly source auto discovery.");
+                if (Activator.CreateInstance(candidate) is not Source source)
+                    throw new RuntimeError($"Failed to instantiate discovered source {candidate.Name}.");
                 AddSource(source);
             }
         }
+    }
+    
+    public void Launch()
+    {
+        _initialization.Wait();
     }
 }
