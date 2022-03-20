@@ -38,7 +38,8 @@ public partial class ProxyGenerator
     public virtual Type GetProxy(Type proxiedType)
     {
         if (proxiedType.IsValueType)
-            throw new UserError($"Can not create proxy type for value type {proxiedType.Name}.");
+            ErrorCenter.ReportFatal<UserError>(
+                $"Can not create proxy type for value type {proxiedType.Name}.");
         return _generatedTypes.GetOrAdd(proxiedType, GenerateProxyClass);
     }
 

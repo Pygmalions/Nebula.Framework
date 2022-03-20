@@ -19,14 +19,20 @@ public class AspectHandlerAttribute : Attribute
     public AspectHandlerAttribute(params Type[] triggerAttributes)
     {
         var baseAttributeType = typeof(Attribute);
-
+        var availableTriggerAttribute = new HashSet<Type>();
         foreach (var attributeType in triggerAttributes)
-            if (!attributeType.IsSubclassOf(baseAttributeType))
-                throw new UserError($"Attribute {attributeType.Name} " +
-                                    $"marked in the {nameof(AspectHandlerAttribute)} " +
-                                    "is not an attribute type.");
+        {
+            if (attributeType.IsSubclassOf(baseAttributeType))
+            {
+                availableTriggerAttribute.Add(attributeType);
+                continue;
+            }
+            ErrorCenter.Report<UserError>(Importance.Warning, $"Attribute {attributeType.Name} " +
+                                                              $"marked in the {nameof(AspectHandlerAttribute)} " +
+                                                              "is not an attribute type.");
+        }
 
-        TriggerAttributes = new HashSet<Type>(triggerAttributes);
+        TriggerAttributes = availableTriggerAttribute;
     }
 
     public IReadOnlySet<Type> TriggerAttributes { get; }

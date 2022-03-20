@@ -24,41 +24,58 @@ public partial class PresetAttribute
             if (contentAttribute != null)
             {
                 if (ContentPreset != null)
-                    throw new UserError(
+                {
+                    ErrorCenter.Report<UserError>(Importance.Warning,
                         $"Only one member preset in {type.Name} " +
                         $"can be marked with {nameof(ContentAttribute)}.");
-                ContentPreset = member switch
+                    continue;
+                }
+
+                switch (member)
                 {
-                    PropertyInfo property when !property.CanRead => throw new UserError(
-                        $"Content preset {property.Name} is not allowed to read."),
-                    PropertyInfo property when !property.PropertyType.IsAssignableTo(typeof(IPreset)) => throw
-                        new UserError($"{nameof(ContentAttribute)} can only " +
-                                      $"be marked on member implements {nameof(IPreset)}."),
-                    FieldInfo field when !field.FieldType.IsAssignableTo(typeof(IPreset)) => throw new UserError(
-                        $"{nameof(ContentAttribute)} can only " + $"be marked on member implements {nameof(IPreset)}."),
-                    _ => member
-                };
+                    case PropertyInfo property when !property.CanRead:
+                        ErrorCenter.Report<UserError>(Importance.Error,
+                            $"Content preset {property.Name} is not allowed to read.");
+                        continue;
+                    case PropertyInfo property when !property.PropertyType.IsAssignableTo(typeof(IPreset)):
+                    case FieldInfo field when !field.FieldType.IsAssignableTo(typeof(IPreset)):
+                        ErrorCenter.Report<UserError>(Importance.Error,
+                            $"{nameof(ContentAttribute)} can only " +
+                            $"be marked on member implements {nameof(IPreset)}.");
+                        continue;
+                    default:
+                        ContentPreset = member;
+                        break;
+                }
             }
 
             var propertyAttribute = member.GetCustomAttribute<PropertyAttribute>();
             if (propertyAttribute == null)
                 continue;
             if (contentAttribute != null)
-                throw new UserError($"Member preset {member.Name} can not be marked with both of" +
-                                    $" {nameof(ContentAttribute)} and {nameof(PropertyAttribute)}.");
-            
-            ContentPreset = member switch
             {
-                PropertyInfo { CanRead: false } property => throw new UserError(
-                    $"Property preset {property.Name} is not allowed to read."),
-                PropertyInfo property when !property.PropertyType.IsAssignableTo(typeof(IPreset)) => throw
-                    new UserError($"{nameof(PropertyAttribute)} can only " +
-                                  $"be marked on member implements {nameof(IPreset)}."),
-                FieldInfo field when !field.FieldType.IsAssignableTo(typeof(IPreset)) => throw new UserError(
-                    $"{nameof(PropertyAttribute)} can only " + $"be marked on member implements {nameof(IPreset)}."),
-                _ => member
-            };
-            
+                ErrorCenter.Report<UserError>(Importance.Warning,
+                    $"Member preset {member.Name} can not be marked with both of" +
+                    $" {nameof(ContentAttribute)} and {nameof(PropertyAttribute)}.");
+            }
+
+            switch (member)
+            {
+                case PropertyInfo { CanRead: false } property:
+                    ErrorCenter.Report<UserError>(Importance.Error, 
+                        $"Property preset {property.Name} is not allowed to read.");
+                    continue;
+                case PropertyInfo property when !property.PropertyType.IsAssignableTo(typeof(IPreset)):
+                case FieldInfo field when !field.FieldType.IsAssignableTo(typeof(IPreset)):
+                    ErrorCenter.Report<UserError>(Importance.Error, 
+                        $"{nameof(PropertyAttribute)} can only " +
+                        $"be marked on member implements {nameof(IPreset)}.");
+                    continue;
+                default:
+                    ContentPreset = member;
+                    break;
+            }
+
             propertyPresets.Add(propertyAttribute.Name, member);
         }
 

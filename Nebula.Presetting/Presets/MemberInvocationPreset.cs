@@ -58,18 +58,20 @@ public class MemberInvocationPreset : IItem<object?>
     
     public object? Translate()
     {
-        return Member.Translate() switch
+        switch (Member.Translate())
         {
-            EventInfo eventMember =>
-                eventMember.RaiseMethod?.Invoke(Holder?.Translate(), Arguments?.Translate()),
-            FieldInfo fieldMember =>
-                fieldMember.GetValue(Holder?.Translate()),
-            MethodInfo methodMember =>
-                methodMember.Invoke(Holder?.Translate(), Arguments?.Translate().ToArray()),
-            PropertyInfo propertyMember =>
-                propertyMember.GetGetMethod()?.Invoke(Holder?.Translate(), Arguments?.Translate()),
-            _ => throw new UserError($"Invalid member preset. Can not find member " +
-                                     $"{Member.Translate().Name} in {Member.Translate().Name}.")
-        };
+            case EventInfo eventMember:
+                return eventMember.RaiseMethod?.Invoke(Holder?.Translate(), Arguments?.Translate());
+            case FieldInfo fieldMember:
+                return fieldMember.GetValue(Holder?.Translate());
+            case MethodInfo methodMember:
+                return methodMember.Invoke(Holder?.Translate(), Arguments?.Translate().ToArray());
+            case PropertyInfo propertyMember:
+                return propertyMember.GetGetMethod()?.Invoke(Holder?.Translate(), Arguments?.Translate());
+            default:
+                return ErrorCenter.Report<UserError>(Importance.Error,
+                    $"Invalid member preset. Can not find member " +
+                    $"{Member.Translate().Name} in {Member.Translate().Name}.");
+        }
     }
 }

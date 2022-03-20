@@ -45,8 +45,13 @@ public static class PresetHelper
         var presetType = preset.GetType();
         var presetAttribute = presetType.GetCustomAttribute<PresetAttribute>();
         if (presetAttribute == null)
-            throw new UserError($"Preset {presetType.Name} must be marked with " +
-                                $"{nameof(PresetAttribute)} to enable member presets scanning.");
+        {
+            ErrorCenter.Report<UserError>(Importance.Error,
+                $"Preset {presetType.Name} must be marked with " +
+                $"{nameof(PresetAttribute)} to enable member presets scanning.");
+            return null;
+        }
+            
         presetAttribute.ScanMemberPresets(presetType);
         return presetAttribute.ContentPreset switch
         {
@@ -74,8 +79,13 @@ public static class PresetHelper
         var presetType = preset.GetType();
         var presetAttribute = presetType.GetCustomAttribute<PresetAttribute>();
         if (presetAttribute == null)
-            throw new UserError($"Preset {presetType.Name} must be marked with " +
-                                $"{nameof(PresetAttribute)} to enable member presets scanning.");
+        {
+            ErrorCenter.Report<UserError>(Importance.Warning, 
+                $"Preset {presetType.Name} must be marked with " +
+                $"{nameof(PresetAttribute)} to enable member presets scanning.");
+            return new Dictionary<string, IPreset>();
+        }
+           
         presetAttribute.ScanMemberPresets(presetType);
 
         if (presetAttribute.PropertyPresets == null)

@@ -43,11 +43,13 @@ public class Domain : Container
                 if (sourceAttribute == null)
                     continue;
                 if (candidate.GetConstructor(Type.EmptyTypes) == null)
-                    throw new UserError($"Source {candidate.Name} is marked with {nameof(SourceAttribute)} " +
-                                        $"but does not have a no-argument constructor.");
-                if (Activator.CreateInstance(candidate) is not Source source)
-                    throw new RuntimeError($"Failed to instantiate discovered source {candidate.Name}.");
-                AddSource(source);
+                    ErrorCenter.Report<UserError>(Importance.Warning, 
+                        $"Source {candidate.Name} is marked with {nameof(SourceAttribute)} " +
+                        "but does not have a no-argument constructor.");
+                else if (Activator.CreateInstance(candidate) is not Source source)
+                    ErrorCenter.Report<RuntimeError>(Importance.Warning,
+                        $"Failed to instantiate discovered source {candidate.Name}.");
+                else AddSource(source);
             }
         }
     }

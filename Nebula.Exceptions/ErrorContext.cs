@@ -23,6 +23,8 @@ public class ErrorContext
     
     public bool ContinueRequired { get; private set; }
     
+    public object? ReturningValue { get; private set; }
+    
     /// <summary>
     /// Stored original error to handle.
     /// Usually, it is recommended to use <see cref="Error"/> instead.
@@ -74,6 +76,15 @@ public class ErrorContext
     public void Continue()
     {
         ContinueRequired = true;
+    }
+
+    /// <summary>
+    /// Set the returning value if the execution continues.
+    /// </summary>
+    /// <param name="returningValue">Value to return.</param>
+    public void Return(object? returningValue)
+    {
+        ReturningValue = returningValue;
     }
 
     /// <summary>

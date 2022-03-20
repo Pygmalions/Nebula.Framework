@@ -37,8 +37,8 @@ public class MemberLocationPreset : IItem<MemberInfo>
     {
         // C# does not allow multiple members to have the same name.
         var member = Class.Translate().GetMember(Name.Translate());
-        if (member == null || member.Length == 0)
-            throw new UserError($"Failed to find a member of {Class.Translate().Name} named {Name.Translate()}");
+        if (member.Length == 0)
+            ErrorCenter.ReportFatal<InvalidPresetError>($"Failed to find a member of {Class.Translate().Name} named {Name.Translate()}");
         return member[0];
     }
 }

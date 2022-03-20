@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Net;
 using Nebula.Exceptions;
 
 namespace Nebula.Resource;
@@ -70,15 +71,19 @@ public partial class Container
     internal void DeclareResource(Scope scope, Type type, IIdentifier identifier, Source provider)
     {
         if (!_sources.TryGetValue(provider, out var resources))
-            throw new UserError("Failed to declare resource: the provide is not installed to this container.");
-        
+        {
+            ErrorCenter.Report<UserError>(Importance.Warning,
+                "Failed to declare resource: the provide is not installed to this container.");
+            return;
+        }
+
         var layer = _declarations.GetOrAdd(scope, 
             _ => new ConcurrentDictionary<Type, ConcurrentDictionary<IIdentifier, Source>>());
         var category = layer.GetOrAdd(type, 
             _ => new ConcurrentDictionary<IIdentifier, Source>());
         if (!category.TryAdd(identifier, provider))
         {
-            throw new RuntimeError(
+            ErrorCenter.Report<RuntimeError>(Importance.Warning,
                 "Failed to declare an resource: resource already declared.");
         }
         resources.TryAdd(new Declaration(type, identifier, scope), scope);
@@ -94,8 +99,12 @@ public partial class Container
     internal void RevokeResource(Scope scope, Type type, IIdentifier identifier, Source provider)
     {
         if (!_sources.TryGetValue(provider, out var resources))
-            throw new UserError("Failed to declare resource: the provide is not installed to this container.");
-        
+        {
+            ErrorCenter.Report<UserError>(Importance.Warning,
+                "Failed to revoke resource: the provide is not installed to this container.");
+            return;
+        }
+
         if (!_declarations.TryGetValue(scope, out var layer))
             return;
         if (!layer.TryGetValue(type, out var category))
@@ -104,8 +113,11 @@ public partial class Container
             return;
         resources.TryRemove(new Declaration(type, identifier, scope), out _);
         if (currentProvider != provider)
-            throw new RuntimeError(
+        {
+            ErrorCenter.Report<RuntimeError>(Importance.Warning,
                 "Failed to revoke resource declaration: the resource is not provided by this source.");
+            return;
+        }
         category.TryRemove(identifier, out _);
     }
 
@@ -118,8 +130,13 @@ public partial class Container
     /// </exception>
     public void AddSource(Source source)
     {
+
         if (_sources.ContainsKey(source))
-            throw new UserError("Failed to add a source: it has already been added.");
+        {
+            ErrorCenter.Report<UserError>(Importance.Warning, 
+                "Failed to add a source: it has already been added to this container.");
+            return;
+        }
         _sources.TryAdd(source, new ConcurrentDictionary<Declaration, Scope>());
         source.Install(this);
     }
@@ -134,7 +151,11 @@ public partial class Container
     public void RemoveSource(Source source)
     {
         if (!_sources.TryRemove(source, out var declarations))
-            throw new UserError("Failed to remove a source: it has not been added to this container.");
+        {
+            ErrorCenter.Report<UserError>(Importance.Warning,
+                "Failed to remove a source: it has not been added to this container.");
+            return;
+        }
         source.Uninstall();
 
         Parallel.ForEach(declarations, pair =>

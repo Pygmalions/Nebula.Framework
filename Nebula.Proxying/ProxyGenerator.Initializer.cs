@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Reflection;
 using Nebula.Exceptions;
 using Nebula.Extending;
@@ -63,18 +64,21 @@ public partial class ProxyGenerator
     public static void RegisterAspectHandler(Type handlerType)
     {
         if (!handlerType.IsSubclassOf(Meta.AspectHandlerMeta.Class))
-            throw new UserError(
+            ErrorCenter.ReportFatal<UserError>(
                 $"Type {handlerType.Name} is not a class type inherited from {nameof(AspectHandler)}.");
         var attribute = handlerType.GetCustomAttribute<AspectHandlerAttribute>();
         if (attribute == null)
-            throw new UserError(
+            ErrorCenter.ReportFatal<UserError>(
                 $"Type {handlerType.Name} doest not have attribute {nameof(AspectHandlerAttribute)}.");
         foreach (var triggerAttributeType in attribute.TriggerAttributes)
         {
             if (!triggerAttributeType.IsSubclassOf(Meta.AspectTriggerMeta.Class))
-                throw new UserError(
+            {
+                ErrorCenter.Report<UserError>(Importance.Error,
                     $"Plugin {handlerType.Name} will not be triggered by the attribute " +
                     $"{triggerAttributeType.Name} for it is not derived from {nameof(AspectTrigger)}");
+                continue;
+            }
             var group = AspectHandlers.GetOrAdd(
                 triggerAttributeType, _ =>
                     new ConcurrentDictionary<Type, AspectHandler>());
@@ -85,22 +89,26 @@ public partial class ProxyGenerator
             }
             catch (Exception exception)
             {
-                throw exception switch
+                switch (exception)
                 {
-                    MissingMethodException =>
-                        new UserError(
+                    case MissingMethodException:
+                        ErrorCenter.Report<UserError>(Importance.Error,
                             $"Aspect handler {handlerType.Name} is marked with the " +
                             $"{nameof(AspectHandlerAttribute)} but has no constructor without arguments.",
-                            exception),
-                    _ => new RuntimeError(
-                        $"Failed to instantiate instance for aspect handler {handlerType.Name}", exception)
-                };
+                            exception);
+                        continue;
+                    default:
+                        ErrorCenter.Report<RuntimeError>(Importance.Error,
+                            "Failed to instantiate instance for aspect handler {handlerType.Name}",
+                            exception);
+                        continue;
+                }
             }
 
             if (handler == null)
-                throw new RuntimeError(
-                    $"Failed to instantiate instance for aspect handler {handlerType.Name}");
-
+                ErrorCenter.ReportFatal<RuntimeError>(Importance.Error,
+                    "Failed to instantiate instance for aspect handler {handlerType.Name}");
+            
             group.TryAdd(handlerType, handler!);
         }
     }

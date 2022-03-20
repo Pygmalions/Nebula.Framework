@@ -15,7 +15,7 @@ public class DirectList<TItem> : IArray<TItem>
     }
 
     private static readonly Lazy<DirectArray<TItem>> SingletonEmptyInstance =
-        new Lazy<DirectArray<TItem>>(() => new DirectArray<TItem>());
+        new(() => new DirectArray<TItem>());
 
     public static DirectArray<TItem> EmptyArray => SingletonEmptyInstance.Value;
 }

@@ -9,7 +9,11 @@ public abstract class Source
     internal void Install(Container container)
     {
         if (_container != null)
-            throw new UserError("A source can not be added to more than one container.");
+        {
+            ErrorCenter.Report<UserError>(Importance.Warning,
+                "A source can not be added to more than one container.");
+            return;
+        }
         _container = container;
         OnInstall(container);
     }
@@ -34,7 +38,11 @@ public abstract class Source
     protected void Declare(Scope scope, Type type, IIdentifier identifier)
     {
         if (_container == null)
-            throw new UserError($"Source {GetType().Name} can not declare resource before it is installed.");
+        {
+            ErrorCenter.Report<UserError>(Importance.Warning,
+                $"Source {GetType().Name} can not declare resource before it is installed.");
+            return;
+        }
         _container.DeclareResource(scope, type, identifier, this);
     }
 
@@ -50,7 +58,11 @@ public abstract class Source
     protected void Revoke(Scope scope, Type type, IIdentifier identifier)
     {
         if (_container == null)
-            throw new UserError($"Source {GetType().Name} can not revoke resource before it is installed.");
+        {
+            ErrorCenter.Report<UserError>(Importance.Warning,
+                $"Source {GetType().Name} can not revoke resource before it is installed.");
+            return;
+        }
         _container.RevokeResource(scope, type, identifier, this);
     }
     

@@ -15,21 +15,21 @@ public static class ErrorCenter
     /// </summary>
     /// <param name="exception">Exception to report.</param>
     /// <param name="importance">Importance level of this exception.</param>
-    public static void Report(Exception exception, Importance importance = Importance.Error, bool fatal = false)
+    public static object? Report(Exception exception, Importance importance = Importance.Error, bool fatal = false)
     {
-        SingletonInstance.Value.ReportError(exception, importance, false);
+        return SingletonInstance.Value.ReportError(exception, importance, false);
     }
-    
+
     /// <summary>
     /// Use the singleton instance to report an exception.
     /// If no handler can handle this error, then it will be thrown.
+    /// Importance level is fixed at <see cref="Importance.Error"/>.
     /// </summary>
     /// <param name="exception">Exception to report.</param>
-    /// <param name="importance">Importance level of this exception.</param>
     [DoesNotReturn]
-    public static void ReportFatal(Exception exception, Importance importance = Importance.Error)
+    public static void ReportFatal(Exception exception)
     {
-        SingletonInstance.Value.ReportError(exception, importance, true);
+        SingletonInstance.Value.ReportError(exception, Importance.Error, true);
     }
     
     /// <summary>
@@ -39,30 +39,30 @@ public static class ErrorCenter
     /// <typeparam name="TException">Type of exception to instantiate and report.</typeparam>
     /// <param name="importance">Importance level of this exception.</param>
     /// <param name="arguments">Arguments to construct the exception instance.</param>
-    public static void Report<TException>(Importance importance = Importance.Error, params object?[] arguments)
+    public static object? Report<TException>(Importance importance = Importance.Error, params object?[] arguments)
         where TException : Exception
     {
         if (Activator.CreateInstance(typeof(TException), arguments) is not Exception exception)
             throw new RuntimeError($"Failed to instantiate {typeof(TException).Name} or " +
                                    $"convert it into {nameof(Exception)}.");
-        SingletonInstance.Value.ReportError(exception, importance);
+        return SingletonInstance.Value.ReportError(exception, importance);
     }
-    
+
     /// <summary>
     /// Use the singleton instance to instantiate and report an exception.
     /// If no handler can handle this error, then it will be thrown.
+    /// Importance level is fixed at <see cref="Importance.Error"/>.
     /// </summary>
     /// <typeparam name="TException">Type of exception to instantiate and report.</typeparam>
-    /// <param name="importance">Importance level of this exception.</param>
     /// <param name="arguments">Arguments to construct the exception instance.</param>
     [DoesNotReturn]
-    public static void ReportFatal<TException>(Importance importance = Importance.Error, params object?[] arguments)
+    public static void ReportFatal<TException>(params object?[] arguments)
         where TException : Exception
     {
         if (Activator.CreateInstance(typeof(TException), arguments) is not Exception exception)
             throw new RuntimeError($"Failed to instantiate {typeof(TException).Name} or " +
                                    $"convert it into {nameof(Exception)}.");
-        SingletonInstance.Value.ReportError(exception, importance, true);
+        SingletonInstance.Value.ReportError(exception, Importance.Error, true);
     }
 
     public static void RegisterHandler(Type exceptionType, IErrorHandler handler)
