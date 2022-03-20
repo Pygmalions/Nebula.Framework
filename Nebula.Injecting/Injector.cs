@@ -3,7 +3,7 @@ using Nebula.Injecting.Presets;
 
 namespace Nebula.Injecting;
 
-public class PresetInjector
+public static class PresetInjector
 {
     public static void Inject(object instance, InjectionPreset preset)
     {
