@@ -13,6 +13,8 @@
         <RepositoryType>git</RepositoryType>
         <PackageTags>Nebula;</PackageTags>
         <Authors>Nebula</Authors>
+        <PackageId>NebulaFramework.Extending</PackageId>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
 
 </Project>

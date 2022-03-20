@@ -13,6 +13,9 @@
         <RepositoryUrl>https://github.com/NebulaCommittee/Nebula.Framework</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageTags>Nebula;</PackageTags>
+        <AssemblyName>.Injecting</AssemblyName>
+        <PackageId>NebulaFramework.Injecting</PackageId>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
 
     <ItemGroup>

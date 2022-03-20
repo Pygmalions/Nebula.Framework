@@ -13,6 +13,8 @@
         <RepositoryUrl>https://github.com/NebulaCommittee/Nebula.Framework</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageTags>Nebula;</PackageTags>
+        <PackageId>NebulaFramework.Resource</PackageId>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
 
     <ItemGroup>

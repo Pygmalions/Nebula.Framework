@@ -5,14 +5,18 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <PackageVersion>0.1.0</PackageVersion>
-        <Title>Nebula Framework</Title>
+        <Title>Nebula Core</Title>
         <Authors>Nebula</Authors>
         <Description>The core library of Nebula Framework. This library provides the Domain concept.</Description>
-        <Copyright>MIT License.</Copyright>
+        <Copyright>Nebula Committee all rights reserved.</Copyright>
         <PackageProjectUrl>https://github.com/NebulaCommittee</PackageProjectUrl>
         <RepositoryUrl>https://github.com/NebulaCommittee/Nebula.Framework</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageTags>Nebula;</PackageTags>
+        <AssemblyName>Nebula.Core</AssemblyName>
+        <RootNamespace>Nebula.Core</RootNamespace>
+        <PackageId>NebulaFramework.Core</PackageId>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
 
     <ItemGroup>
