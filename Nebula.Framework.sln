@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{871EC9F6-76F2-48BF-A447-3ADF4E6A630C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Core", "Nebula.Core\Nebula.Core.csproj", "{B3A4E447-123B-453D-8337-5974FD8BB0B9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Framework", "Nebula.Framework\Nebula.Framework.csproj", "{B3A4E447-123B-453D-8337-5974FD8BB0B9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Proxying", "Nebula.Proxying\Nebula.Proxying.csproj", "{5742E83E-5A1F-4535-8510-17D1CC45F0EE}"
 EndProject

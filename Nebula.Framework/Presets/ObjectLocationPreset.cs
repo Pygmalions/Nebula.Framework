@@ -2,7 +2,7 @@
 using Nebula.Presetting.Features;
 using Nebula.Resource;
 
-namespace Nebula.Core.Presets;
+namespace Nebula.Framework.Presets;
 
 /// <summary>
 /// Location an object from the current domain.

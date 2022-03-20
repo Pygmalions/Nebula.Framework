@@ -5,7 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <PackageVersion>0.1.0</PackageVersion>
-        <Title>Nebula Core</Title>
+        <Title>Nebula Framework</Title>
         <Authors>Nebula</Authors>
         <Description>The core library of Nebula Framework. This library provides the Domain concept.</Description>
         <Copyright>MIT License.</Copyright>

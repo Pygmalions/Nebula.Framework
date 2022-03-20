@@ -5,7 +5,7 @@ using Nebula.Resource;
 
 [assembly: PluginAssembly]
 
-namespace Nebula.Core;
+namespace Nebula.Framework;
 
 public class Domain : Container
 {
