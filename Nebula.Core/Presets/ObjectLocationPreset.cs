@@ -5,7 +5,7 @@ using Nebula.Resource;
 namespace Nebula.Core.Presets;
 
 /// <summary>
-/// Location an object from the current domain.
+/// Locate an object from the current domain.
 /// </summary>
 public class ObjectLocationPreset : IItem<object?>
 {

@@ -4,7 +4,7 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <PackageVersion>0.8.0</PackageVersion>
+        <PackageVersion>0.8.1</PackageVersion>
         <Title>Nebula Extending</Title>
         <Description>It allows to conditionally enable in-assembly resource auto discovery function on specific assemblies. This is the essential library for other Nebula Framework libraries which support in-assembly resource auto discovery.</Description>
         <Copyright>MIT License.</Copyright>
