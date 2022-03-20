@@ -10,7 +10,7 @@ public class GeneratorTest
     public void GeneratedCodeCorrectness()
     {
         Type? refraction = null;
-        Assert.DoesNotThrow(() => { refraction = ProxyGenerator.Get<SampleObject>(); });
+        Assert.DoesNotThrow(() => { refraction = ProxyClass.Get<SampleObject>(); });
         Assert.NotNull(refraction);
         Assert.DoesNotThrow(() => Activator.CreateInstance(refraction!));
     }
@@ -18,7 +18,7 @@ public class GeneratorTest
     [Test]
     public void InterfaceCompleteness()
     {
-        var refraction = ProxyGenerator.Get<SampleObject>();
+        var refraction = ProxyClass.Get<SampleObject>();
         var testSample = Activator.CreateInstance(refraction) as SampleObject;
         Assert.NotNull(testSample);
         var provider = testSample as IProxiedObject;
@@ -30,7 +30,7 @@ public class GeneratorTest
     [Test]
     public void GetFunctionProxy()
     {
-        var refraction = ProxyGenerator.Get<SampleObject>();
+        var refraction = ProxyClass.Get<SampleObject>();
         var testSample = Activator.CreateInstance(refraction) as SampleObject;
         Assert.NotNull(testSample);
         // Verify constructor function (change the Number from default 0 to -1).
@@ -45,7 +45,7 @@ public class GeneratorTest
     [Test]
     public void GetPropertyProxy()
     {
-        var refraction = ProxyGenerator.Get<SampleObject>();
+        var refraction = ProxyClass.Get<SampleObject>();
         var testSample = Activator.CreateInstance(refraction) as SampleObject;
         Assert.NotNull(testSample);
         // Verify constructor function (change the Number from default 0 to -1).
@@ -60,7 +60,7 @@ public class GeneratorTest
     [Test]
     public void ProxiedPropertyGet()
     {
-        var refraction = ProxyGenerator.Get<SampleObject>();
+        var refraction = ProxyClass.Get<SampleObject>();
         var testSample = Activator.CreateInstance(refraction) as SampleObject;
         Assert.NotNull(testSample);
         var number = testSample!.Number;
@@ -70,7 +70,7 @@ public class GeneratorTest
     [Test]
     public void ProxiedPropertySet()
     {
-        var refraction = ProxyGenerator.Get<SampleObject>();
+        var refraction = ProxyClass.Get<SampleObject>();
         var testSample = Activator.CreateInstance(refraction) as SampleObject;
         Assert.NotNull(testSample);
         testSample!.Number = 2;
@@ -80,7 +80,7 @@ public class GeneratorTest
     [Test]
     public void ProxiedMethod()
     {
-        var refraction = ProxyGenerator.Get<SampleObject>();
+        var refraction = ProxyClass.Get<SampleObject>();
         var testSample = Activator.CreateInstance(refraction) as SampleObject;
         Assert.NotNull(testSample);
         var number = testSample!.PropertyNumber;
@@ -91,7 +91,7 @@ public class GeneratorTest
     [Test]
     public void MethodProxyFunction()
     {
-        var refraction = ProxyGenerator.Get<SampleObject>();
+        var refraction = ProxyClass.Get<SampleObject>();
         var testSample = Activator.CreateInstance(refraction) as SampleObject;
         Assert.NotNull(testSample);
         var provider = testSample as IProxiedObject;
@@ -127,7 +127,7 @@ public class GeneratorTest
     [Test]
     public void PluginTest()
     {
-        var refraction = ProxyGenerator.Get<SampleObject>();
+        var refraction = ProxyClass.Get<SampleObject>();
         Activator.CreateInstance(refraction);
         Assert.IsNotEmpty(SampleGeneratorPlugin.GeneratedProxies);
     }

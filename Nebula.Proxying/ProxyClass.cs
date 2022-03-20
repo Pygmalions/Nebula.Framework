@@ -1,6 +1,9 @@
 ﻿namespace Nebula.Proxying;
 
-public partial class ProxyGenerator
+/// <summary>
+/// Singleton access interface for <see cref="ProxyGenerator"/>.
+/// </summary>
+public static class ProxyClass
 {
     private static readonly Lazy<ProxyGenerator> SingletonInstance = 
         new Lazy<ProxyGenerator>(() => new ProxyGenerator());
