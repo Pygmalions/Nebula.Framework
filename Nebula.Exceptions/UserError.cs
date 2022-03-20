@@ -8,10 +8,11 @@
 public class UserError : Exception
 {
     public UserError()
-    {
-    }
+    {}
 
-    public UserError(string message, Exception? innerException = null) : base(message, innerException)
-    {
-    }
+    public UserError(string message) : base(message)
+    {}
+
+    public UserError(string message, Exception innerException) : base(message, innerException)
+    {}
 }

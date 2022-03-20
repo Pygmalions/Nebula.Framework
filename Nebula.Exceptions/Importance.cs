@@ -1,6 +1,6 @@
 ﻿namespace Nebula.Exceptions;
 
-public enum ImportanceLevels : byte
+public enum Importance : byte
 {
     Ignoring = 0,
     Information = 1,
