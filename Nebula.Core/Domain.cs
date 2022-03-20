@@ -7,7 +7,7 @@ using Nebula.Resource;
 
 namespace Nebula.Core;
 
-public class Domain : Container
+public partial class Domain : Container
 {
     private static readonly Lazy<Domain> SingletonInstance =
         new(() => new Domain(), LazyThreadSafetyMode.ExecutionAndPublication);
@@ -27,35 +27,46 @@ public class Domain : Container
     /// <summary>
     /// Initialize the domain. This will only work once in <see cref="_initialization"/>.
     /// </summary>
-    /// <exception cref="RuntimeError"></exception>
     private void Initialize()
     {
         if (_initialization.IsCompleted) return;
         
-        // In-assembly source auto discovery.
+        // In-assembly domain script auto discovery.
         foreach (var (_, assembly) in PluginRegistry.FoundPlugins)
         {
             foreach (var candidate in assembly.GetTypes())
             {
-                if (!candidate.IsSubclassOf(typeof(Source)))
+                if (!candidate.IsAssignableTo(typeof(IDomainScript)))
                     continue;
-                var sourceAttribute = candidate.GetCustomAttribute<SourceAttribute>();
+                var sourceAttribute = candidate.GetCustomAttribute<DomainScriptAttribute>();
                 if (sourceAttribute == null)
                     continue;
                 if (candidate.GetConstructor(Type.EmptyTypes) == null)
                     ErrorCenter.Report<UserError>(Importance.Warning, 
-                        $"Source {candidate.Name} is marked with {nameof(SourceAttribute)} " +
-                        "but does not have a no-argument constructor.");
-                else if (Activator.CreateInstance(candidate) is not Source source)
+                        $"Domain script {candidate.Name} is marked " +
+                        $"with {nameof(DomainScriptAttribute)} but does not have a no-argument constructor.");
+                if (Activator.CreateInstance(candidate) is not IDomainScript script)
+                {
                     ErrorCenter.Report<RuntimeError>(Importance.Warning,
-                        $"Failed to instantiate discovered source {candidate.Name}.");
-                else AddSource(source);
+                        $"Failed to instantiate discovered domain script {candidate.Name}.");
+                    continue;
+                }
+                AddScript(script);
             }
         }
+        
+        TriggerScript("Initialize");
     }
     
+    /// <summary>
+    /// Launch the current program domain.
+    /// </summary>
     public void Launch()
     {
         _initialization.Wait();
+        
+        TriggerScript("Launch");
+        
+        TriggerScript("Finish");
     }
 }
