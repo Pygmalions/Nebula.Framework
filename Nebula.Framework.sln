@@ -11,11 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Proxying", "Nebula.P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Exceptions", "Nebula.Exceptions\Nebula.Exceptions.csproj", "{7A8FFF1F-5BA7-4A41-BB97-7A49CF0E2983}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.EntityModel", "Nebula.EntityModel\Nebula.EntityModel.csproj", "{54A96CDB-50DC-4879-8FD3-0348D14C1194}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Extending", "Nebula.Extending\Nebula.Extending.csproj", "{F9A6F01B-74A2-4777-8606-2E2786A2274E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.ServiceModel", "Nebula.ServiceModel\Nebula.ServiceModel.csproj", "{9E669B07-28F4-4AD1-92FE-84C9AEE20EE7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Resource", "Nebula.Resource\Nebula.Resource.csproj", "{994FD107-83B2-46A6-8AA9-50CCF10EC235}"
 EndProject
@@ -45,18 +41,10 @@ Global
 		{7A8FFF1F-5BA7-4A41-BB97-7A49CF0E2983}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A8FFF1F-5BA7-4A41-BB97-7A49CF0E2983}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A8FFF1F-5BA7-4A41-BB97-7A49CF0E2983}.Release|Any CPU.Build.0 = Release|Any CPU
-		{54A96CDB-50DC-4879-8FD3-0348D14C1194}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{54A96CDB-50DC-4879-8FD3-0348D14C1194}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{54A96CDB-50DC-4879-8FD3-0348D14C1194}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{54A96CDB-50DC-4879-8FD3-0348D14C1194}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F9A6F01B-74A2-4777-8606-2E2786A2274E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F9A6F01B-74A2-4777-8606-2E2786A2274E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9A6F01B-74A2-4777-8606-2E2786A2274E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F9A6F01B-74A2-4777-8606-2E2786A2274E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9E669B07-28F4-4AD1-92FE-84C9AEE20EE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9E669B07-28F4-4AD1-92FE-84C9AEE20EE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9E669B07-28F4-4AD1-92FE-84C9AEE20EE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9E669B07-28F4-4AD1-92FE-84C9AEE20EE7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{994FD107-83B2-46A6-8AA9-50CCF10EC235}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{994FD107-83B2-46A6-8AA9-50CCF10EC235}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{994FD107-83B2-46A6-8AA9-50CCF10EC235}.Release|Any CPU.ActiveCfg = Release|Any CPU
