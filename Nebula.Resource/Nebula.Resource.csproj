@@ -15,6 +15,8 @@
         <PackageTags>Nebula;</PackageTags>
         <PackageId>NebulaFramework.Resource</PackageId>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageIcon>Icon.png</PackageIcon>
+        <PackageIconUrl>https://i.postimg.cc/43W7XwjX/Nebula-Resized.png</PackageIconUrl>
     </PropertyGroup>
 
     <ItemGroup>
@@ -29,4 +31,7 @@
       </Compile>
     </ItemGroup>
 
+    <ItemGroup>
+        <None Include="Icon.png" Pack="true" PackagePath="\" />
+    </ItemGroup>
 </Project>

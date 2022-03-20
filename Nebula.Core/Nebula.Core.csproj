@@ -17,6 +17,8 @@
         <RootNamespace>Nebula.Core</RootNamespace>
         <PackageId>NebulaFramework.Core</PackageId>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageIcon>Icon.png</PackageIcon>
+        <PackageIconUrl>https://i.postimg.cc/43W7XwjX/Nebula-Resized.png</PackageIconUrl>
     </PropertyGroup>
 
     <ItemGroup>
@@ -24,7 +26,7 @@
       <ProjectReference Include="..\Nebula.Extending\Nebula.Extending.csproj" />
       <ProjectReference Include="..\Nebula.Resource\Nebula.Resource.csproj" />
     </ItemGroup>
-
+    
     <ItemGroup>
       <Folder Include="Sources" />
     </ItemGroup>
