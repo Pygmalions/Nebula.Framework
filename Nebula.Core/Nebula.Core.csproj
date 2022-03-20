@@ -26,6 +26,10 @@
       <ProjectReference Include="..\Nebula.Extending\Nebula.Extending.csproj" />
       <ProjectReference Include="..\Nebula.Resource\Nebula.Resource.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+        <None Include="Icon.png" Pack="true" PackagePath="\" />
+    </ItemGroup>
     
     <ItemGroup>
       <Folder Include="Sources" />
