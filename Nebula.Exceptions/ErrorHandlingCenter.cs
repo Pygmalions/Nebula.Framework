@@ -11,6 +11,11 @@ public class ErrorHandlingCenter
     private readonly ConcurrentDictionary<Type, ConcurrentDictionary<Type, IErrorHandler>> _handlers = new();
 
     /// <summary>
+    /// Event triggered when a new exception is reporting.
+    /// </summary>
+    public event Action<Exception, Importance>? Reporting;
+    
+    /// <summary>
     /// Report an exception.
     /// If no handler can handle this error, then it will be thrown.
     /// </summary>
@@ -20,6 +25,7 @@ public class ErrorHandlingCenter
     public object? ReportError(Exception exception, Importance importance = Importance.Error,
         [DoesNotReturnIf(true)] bool fatal = false)
     {
+        Reporting?.Invoke(exception, importance);
         var context = new ErrorContext(exception, importance);
         for (var searchingType = exception.GetType(); searchingType != null; searchingType = searchingType.BaseType)
         {

@@ -10,6 +10,15 @@ public static class ErrorCenter
     private static readonly Lazy<ErrorHandlingCenter> SingletonInstance = new(()=>new ErrorHandlingCenter());
 
     /// <summary>
+    /// Event triggered when a new exception is reporting.
+    /// </summary>
+    public static event Action<Exception, Importance>? Reporting
+    {
+        add => SingletonInstance.Value.Reporting += value;
+        remove => SingletonInstance.Value.Reporting -= value;
+    }
+    
+    /// <summary>
     /// Use the singleton instance to report an exception.
     /// If no handler can handle this error, then it will be thrown.
     /// </summary>
