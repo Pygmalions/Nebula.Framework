@@ -69,6 +69,7 @@ public partial class Container
     /// <param name="type">Type category of the resource.</param>
     /// <param name="identifier">Identifier of the resource.</param>
     /// <param name="provider">Source which declare this resource.</param>
+    /// <param name="cache">Cached value which be accessed directly.</param>
     internal void DeclareResource(Scope scope, Type type, IIdentifier identifier, Source provider, 
         object? cache = null)
     {

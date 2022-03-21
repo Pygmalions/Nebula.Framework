@@ -47,16 +47,25 @@ public abstract class Source
         _container.DeclareResource(scope, type, identifier, this, cache);
     }
 
+    /// <summary>
+    /// Declare a resource in the bound container.
+    /// </summary>
+    /// <typeparam name="TType">Type category of this resource.</typeparam>
+    /// <param name="scope">Scope of this resource.</param>
+    /// <param name="identifier">Identifier to locate this resource.</param>
+    /// <param name="cache">Cached object to add to the resource entry.</param>
     protected void Declare<TType>(Scope scope, IIdentifier identifier, object? cache = null) 
         => Declare(scope, typeof(TType), identifier, cache);
 
     /// <summary>
-    /// 
+    /// Revoke an resource declaration.
     /// </summary>
-    /// <param name="scope"></param>
-    /// <param name="type"></param>
-    /// <param name="identifier"></param>
-    /// <exception cref="UserError"></exception>
+    /// <param name="scope">Scope of the resource.</param>
+    /// <param name="type">Type category of the resource.</param>
+    /// <param name="identifier">Identifier to locate the resource.</param>
+    /// <exception cref="UserError">
+    /// Throw if the source has not been installed.
+    /// </exception>
     protected void Revoke(Scope scope, Type type, IIdentifier identifier)
     {
         if (_container == null)
@@ -68,6 +77,15 @@ public abstract class Source
         _container.RevokeResource(scope, type, identifier, this);
     }
     
+    /// <summary>
+    /// Revoke an resource declaration.
+    /// </summary>
+    /// <typeparam name="TType">Type category of the resource.</typeparam>
+    /// <param name="scope">Scope of the resource.</param>
+    /// <param name="identifier">Identifier to locate the resource.</param>
+    /// <exception cref="UserError">
+    /// Throw if the source has not been installed.
+    /// </exception>
     protected void Revoke<TType>(Scope scope, IIdentifier identifier) => Revoke(scope, typeof(TType), identifier);
     
     /// <summary>
