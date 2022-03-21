@@ -16,6 +16,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Nebula.Injecting\Nebula.Injecting.csproj" />
+      <ProjectReference Include="..\..\Nebula.Resource\Nebula.Resource.csproj" />
     </ItemGroup>
 
 </Project>

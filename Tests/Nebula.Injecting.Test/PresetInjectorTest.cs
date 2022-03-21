@@ -2,7 +2,7 @@ using NUnit.Framework;
 
 namespace Nebula.Injecting.Test;
 
-public class Tests
+public class PresetInjectorTest
 {
     [Test]
     public void InjectField()
@@ -11,7 +11,7 @@ public class Tests
         builder.InjectObject(nameof(SampleObject.InjectionField), 1);
 
         var sampleObject = new SampleObject();
-        PresetInjector.Inject(sampleObject, builder.BuildPreset());
+        Injector.Inject(sampleObject, builder.BuildPreset());
 
         Assert.AreEqual(1, sampleObject.InjectionField);
         
@@ -19,7 +19,7 @@ public class Tests
         
         builder.InjectObject(nameof(SampleObject.InjectionField), 2);
         
-        PresetInjector.Inject(sampleObject, builder.BuildPreset());
+        Injector.Inject(sampleObject, builder.BuildPreset());
         
         Assert.AreEqual(2, sampleObject.InjectionField);
     }
@@ -31,7 +31,7 @@ public class Tests
         builder.InjectObject(nameof(SampleObject.InjectionProperty), 1);
 
         var sampleObject = new SampleObject();
-        PresetInjector.Inject(sampleObject, builder.BuildPreset());
+        Injector.Inject(sampleObject, builder.BuildPreset());
 
         Assert.AreEqual(1, sampleObject.InjectionProperty);
         
@@ -39,7 +39,7 @@ public class Tests
         
         builder.InjectObject(nameof(SampleObject.InjectionProperty), 2);
         
-        PresetInjector.Inject(sampleObject, builder.BuildPreset());
+        Injector.Inject(sampleObject, builder.BuildPreset());
         
         Assert.AreEqual(2, sampleObject.InjectionProperty);
     }
@@ -51,7 +51,7 @@ public class Tests
         builder.InvokeMethod(nameof(SampleObject.InjectionMethod), 1);
 
         var sampleObject = new SampleObject();
-        PresetInjector.Inject(sampleObject, builder.BuildPreset());
+        Injector.Inject(sampleObject, builder.BuildPreset());
 
         Assert.AreEqual(1, sampleObject.MethodValue);
         
@@ -59,7 +59,7 @@ public class Tests
         
         builder.InvokeMethod(nameof(SampleObject.InjectionMethod), 2);
         
-        PresetInjector.Inject(sampleObject, builder.BuildPreset());
+        Injector.Inject(sampleObject, builder.BuildPreset());
         
         Assert.AreEqual(2, sampleObject.MethodValue);
     }
