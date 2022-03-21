@@ -32,10 +32,11 @@ public abstract class Source
     /// <param name="scope">Scope of this resource.</param>
     /// <param name="type">Type category of this resource.</param>
     /// <param name="identifier">Identifier to locate this resource.</param>
+    /// <param name="cache">Cached object to add to the resource entry.</param>
     /// <exception cref="UserError">
     /// Throw if this source has not been installed by <see cref="Container.AddSource"/>.
     /// </exception>
-    protected void Declare(Scope scope, Type type, IIdentifier identifier)
+    protected void Declare(Scope scope, Type type, IIdentifier identifier, object? cache = null)
     {
         if (_container == null)
         {
@@ -43,10 +44,11 @@ public abstract class Source
                 $"Source {GetType().Name} can not declare resource before it is installed.");
             return;
         }
-        _container.DeclareResource(scope, type, identifier, this);
+        _container.DeclareResource(scope, type, identifier, this, cache);
     }
 
-    protected void Declare<TType>(Scope scope, IIdentifier identifier) => Declare(scope, typeof(TType), identifier);
+    protected void Declare<TType>(Scope scope, IIdentifier identifier, object? cache = null) 
+        => Declare(scope, typeof(TType), identifier, cache);
 
     /// <summary>
     /// 

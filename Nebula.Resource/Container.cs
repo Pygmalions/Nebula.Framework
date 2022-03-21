@@ -7,15 +7,16 @@ namespace Nebula.Resource;
 public partial class Container
 {
     /// <summary>
-    /// Lookup table of (Scope -> Type -> Identifier -> Declaration)
+    /// Lookup table of (Scope -> Type -> Identifier -> Entry))
     /// </summary>
-    private ConcurrentDictionary<Scope, ConcurrentDictionary<Type, ConcurrentDictionary<IIdentifier, Source>>>
+    private readonly ConcurrentDictionary<Scope, 
+            ConcurrentDictionary<Type, ConcurrentDictionary<IIdentifier, Entry>>>
         _declarations = new();
 
     /// <summary>
     /// Lookup table of (Source -> Declaration -> Declaration Information)
     /// </summary>
-    private ConcurrentDictionary<Source, ConcurrentDictionary<Declaration, Scope>> 
+    private readonly ConcurrentDictionary<Source, ConcurrentDictionary<Declaration, Scope>> 
         _sources = new();
 
     /// <summary>
@@ -37,9 +38,9 @@ public partial class Container
                 continue;
             if (!categories.TryGetValue(type, out var declarations))
                 continue;
-            if (!declarations.TryGetValue(identifier, out var provider))
+            if (!declarations.TryGetValue(identifier, out var entry))
                 continue;
-            instance = provider.Acquire(type, identifier);
+            instance = entry.Cache ?? entry.Provider.Acquire(type, identifier);
             if (instance != null)
                 break;
         }
@@ -68,7 +69,8 @@ public partial class Container
     /// <param name="type">Type category of the resource.</param>
     /// <param name="identifier">Identifier of the resource.</param>
     /// <param name="provider">Source which declare this resource.</param>
-    internal void DeclareResource(Scope scope, Type type, IIdentifier identifier, Source provider)
+    internal void DeclareResource(Scope scope, Type type, IIdentifier identifier, Source provider, 
+        object? cache = null)
     {
         if (!_sources.TryGetValue(provider, out var resources))
         {
@@ -78,14 +80,23 @@ public partial class Container
         }
 
         var layer = _declarations.GetOrAdd(scope, 
-            _ => new ConcurrentDictionary<Type, ConcurrentDictionary<IIdentifier, Source>>());
+            _ => new ConcurrentDictionary<Type, ConcurrentDictionary<IIdentifier, Entry>>());
         var category = layer.GetOrAdd(type, 
-            _ => new ConcurrentDictionary<IIdentifier, Source>());
-        if (!category.TryAdd(identifier, provider))
+            _ => new ConcurrentDictionary<IIdentifier, Entry>());
+        
+        if (category.TryGetValue(identifier, out var entry))
         {
-            ErrorCenter.Report<RuntimeError>(Importance.Warning,
-                "Failed to declare an resource: resource already declared.");
+            if (entry.Provider != provider)
+            {
+                ErrorCenter.Report<RuntimeError>(Importance.Warning,
+                    "Failed to declare an resource: resource already declared.");
+            }
+            // Update the cache.
+            entry.Cache = cache;
+            return;
         }
+
+        category.TryAdd(identifier, new Entry(provider, cache));
         resources.TryAdd(new Declaration(type, identifier, scope), scope);
     }
 
@@ -109,10 +120,10 @@ public partial class Container
             return;
         if (!layer.TryGetValue(type, out var category))
             return;
-        if (!category.TryGetValue(identifier, out var currentProvider))
+        if (!category.TryGetValue(identifier, out var currentEntry))
             return;
         resources.TryRemove(new Declaration(type, identifier, scope), out _);
-        if (currentProvider != provider)
+        if (currentEntry.Provider != provider)
         {
             ErrorCenter.Report<RuntimeError>(Importance.Warning,
                 "Failed to revoke resource declaration: the resource is not provided by this source.");
@@ -130,7 +141,6 @@ public partial class Container
     /// </exception>
     public void AddSource(Source source)
     {
-
         if (_sources.ContainsKey(source))
         {
             ErrorCenter.Report<UserError>(Importance.Warning, 
