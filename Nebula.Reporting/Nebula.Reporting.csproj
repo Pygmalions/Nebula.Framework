@@ -4,28 +4,26 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <PackageVersion>0.1.0</PackageVersion>
-        <Title>Nebula Injecting</Title>
+        <PackageVersion>0.1.2</PackageVersion>
+        <Title>Nebula Reporting</Title>
         <Authors>Pygmalions</Authors>
-        <Description>This library provides injection ability.</Description>
+        <Description>This library provides Error, Warning, and Message central report entrance and event center. It is a fundamental library of the Nebula Framework.</Description>
         <Copyright>MIT License.</Copyright>
-        <PackageProjectUrl>https://github.com/Pygmalions</PackageProjectUrl>
+        <PackageProjectUrl>https://github.com/Pygmalions/</PackageProjectUrl>
         <RepositoryUrl>https://github.com/Pygmalions/Nebula.Framework</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <PackageTags>Nebula; IoC; Injection;</PackageTags>
-        <PackageId>Pygmalions.Nebula.Injecting</PackageId>
+        <PackageTags>Nebula;</PackageTags>
+        <PackageId>Pygmalions.Nebula.Reporting</PackageId>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageIcon>Pygmalion.png</PackageIcon>
         <PackageIconUrl>https://i.postimg.cc/j5md5fgW/Pygmalion.png</PackageIconUrl>
         <PackageReleaseNotes>This library under rapid development, thus its API may be unstable. It is not recommended to use this library in production until the version of this library reaches 1.0.0.</PackageReleaseNotes>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     </PropertyGroup>
 
     <ItemGroup>
         <None Include="Pygmalion.png" Pack="true" PackagePath="\" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\Nebula.Reporting\Nebula.Reporting.csproj" />
+        <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
 </Project>

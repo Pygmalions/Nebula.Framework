@@ -5,25 +5,13 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{871EC9F6-76F2-48BF-A447-3ADF4E6A630C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Core", "Nebula.Core\Nebula.Core.csproj", "{B3A4E447-123B-453D-8337-5974FD8BB0B9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Injecting", "Nebula.Injecting\Nebula.Injecting.csproj", "{44F00A88-418B-4F24-9155-BBAFE76B4A52}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Proxying", "Nebula.Proxying\Nebula.Proxying.csproj", "{5742E83E-5A1F-4535-8510-17D1CC45F0EE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Reporting", "Nebula.Reporting\Nebula.Reporting.csproj", "{C1A7580F-01F6-41D1-BA63-2519A16D71AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Exceptions", "Nebula.Exceptions\Nebula.Exceptions.csproj", "{7A8FFF1F-5BA7-4A41-BB97-7A49CF0E2983}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Reporting.Test", "Tests\Nebula.Reporting.Test\Nebula.Reporting.Test.csproj", "{082E8665-8BD6-49D6-A1EE-51B86E95AFCF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Extending", "Nebula.Extending\Nebula.Extending.csproj", "{F9A6F01B-74A2-4777-8606-2E2786A2274E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Resource", "Nebula.Resource\Nebula.Resource.csproj", "{994FD107-83B2-46A6-8AA9-50CCF10EC235}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Presetting", "Nebula.Presetting\Nebula.Presetting.csproj", "{40B94DAA-C6DD-473E-BA21-34304077A735}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Injecting", "Nebula.Injecting\Nebula.Injecting.csproj", "{E6CCE756-CFC6-4835-AB29-F0CD8F65D5F3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Injecting.Test", "Tests\Nebula.Injecting.Test\Nebula.Injecting.Test.csproj", "{A880FD4E-63B0-4081-B4B5-D6C06BA72858}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Proxying.Test", "Tests\Nebula.Proxying.Test\Nebula.Proxying.Test.csproj", "{74180737-65BD-46C2-993B-EA68855845F8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Exceptions.Test", "Tests\Nebula.Exceptions.Test\Nebula.Exceptions.Test.csproj", "{09172141-4E9E-4248-BC7E-5A690080A59C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Reporting.Sample", "Tests\Nebula.Reporting.Sample\Nebula.Reporting.Sample.csproj", "{4415D651-F30A-444A-ADF9-0B263139313F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,46 +19,22 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B3A4E447-123B-453D-8337-5974FD8BB0B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B3A4E447-123B-453D-8337-5974FD8BB0B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B3A4E447-123B-453D-8337-5974FD8BB0B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B3A4E447-123B-453D-8337-5974FD8BB0B9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5742E83E-5A1F-4535-8510-17D1CC45F0EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5742E83E-5A1F-4535-8510-17D1CC45F0EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5742E83E-5A1F-4535-8510-17D1CC45F0EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5742E83E-5A1F-4535-8510-17D1CC45F0EE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7A8FFF1F-5BA7-4A41-BB97-7A49CF0E2983}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7A8FFF1F-5BA7-4A41-BB97-7A49CF0E2983}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7A8FFF1F-5BA7-4A41-BB97-7A49CF0E2983}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7A8FFF1F-5BA7-4A41-BB97-7A49CF0E2983}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F9A6F01B-74A2-4777-8606-2E2786A2274E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F9A6F01B-74A2-4777-8606-2E2786A2274E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F9A6F01B-74A2-4777-8606-2E2786A2274E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F9A6F01B-74A2-4777-8606-2E2786A2274E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{994FD107-83B2-46A6-8AA9-50CCF10EC235}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{994FD107-83B2-46A6-8AA9-50CCF10EC235}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{994FD107-83B2-46A6-8AA9-50CCF10EC235}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{994FD107-83B2-46A6-8AA9-50CCF10EC235}.Release|Any CPU.Build.0 = Release|Any CPU
-		{40B94DAA-C6DD-473E-BA21-34304077A735}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{40B94DAA-C6DD-473E-BA21-34304077A735}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{40B94DAA-C6DD-473E-BA21-34304077A735}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{40B94DAA-C6DD-473E-BA21-34304077A735}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E6CCE756-CFC6-4835-AB29-F0CD8F65D5F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E6CCE756-CFC6-4835-AB29-F0CD8F65D5F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E6CCE756-CFC6-4835-AB29-F0CD8F65D5F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E6CCE756-CFC6-4835-AB29-F0CD8F65D5F3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A880FD4E-63B0-4081-B4B5-D6C06BA72858}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A880FD4E-63B0-4081-B4B5-D6C06BA72858}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A880FD4E-63B0-4081-B4B5-D6C06BA72858}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A880FD4E-63B0-4081-B4B5-D6C06BA72858}.Release|Any CPU.Build.0 = Release|Any CPU
-		{74180737-65BD-46C2-993B-EA68855845F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{74180737-65BD-46C2-993B-EA68855845F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{74180737-65BD-46C2-993B-EA68855845F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{74180737-65BD-46C2-993B-EA68855845F8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{09172141-4E9E-4248-BC7E-5A690080A59C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{09172141-4E9E-4248-BC7E-5A690080A59C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{09172141-4E9E-4248-BC7E-5A690080A59C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{09172141-4E9E-4248-BC7E-5A690080A59C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44F00A88-418B-4F24-9155-BBAFE76B4A52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44F00A88-418B-4F24-9155-BBAFE76B4A52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44F00A88-418B-4F24-9155-BBAFE76B4A52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44F00A88-418B-4F24-9155-BBAFE76B4A52}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1A7580F-01F6-41D1-BA63-2519A16D71AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1A7580F-01F6-41D1-BA63-2519A16D71AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1A7580F-01F6-41D1-BA63-2519A16D71AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1A7580F-01F6-41D1-BA63-2519A16D71AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{082E8665-8BD6-49D6-A1EE-51B86E95AFCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{082E8665-8BD6-49D6-A1EE-51B86E95AFCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{082E8665-8BD6-49D6-A1EE-51B86E95AFCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{082E8665-8BD6-49D6-A1EE-51B86E95AFCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4415D651-F30A-444A-ADF9-0B263139313F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4415D651-F30A-444A-ADF9-0B263139313F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4415D651-F30A-444A-ADF9-0B263139313F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4415D651-F30A-444A-ADF9-0B263139313F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -79,8 +43,7 @@ Global
 		SolutionGuid = {D167B3FE-A501-49A6-9A67-F801DF8AEAE3}
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{A880FD4E-63B0-4081-B4B5-D6C06BA72858} = {871EC9F6-76F2-48BF-A447-3ADF4E6A630C}
-		{74180737-65BD-46C2-993B-EA68855845F8} = {871EC9F6-76F2-48BF-A447-3ADF4E6A630C}
-		{09172141-4E9E-4248-BC7E-5A690080A59C} = {871EC9F6-76F2-48BF-A447-3ADF4E6A630C}
+		{082E8665-8BD6-49D6-A1EE-51B86E95AFCF} = {871EC9F6-76F2-48BF-A447-3ADF4E6A630C}
+		{4415D651-F30A-444A-ADF9-0B263139313F} = {871EC9F6-76F2-48BF-A447-3ADF4E6A630C}
 	EndGlobalSection
 EndGlobal

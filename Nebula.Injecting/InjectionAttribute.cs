@@ -1,30 +1,20 @@
-﻿using Nebula.Resource;
-
-namespace Nebula.Injecting;
+﻿namespace Nebula.Injecting;
 
 /// <summary>
-/// Members marked with this attribute will be auto discovered and injected by <see cref="Injector"/>.
+/// Member marked with this attribute will enable passive injection on them.
+/// <para>
+///     Parameters of a method or constructor can be marked with this attribute to indicates the name of the
+///     injection object. But it is not necessary if it only wants to match the type of the injection object.
+/// </para>
 /// </summary>
-[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | 
-                AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Parameter)]
+[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property |  AttributeTargets.Parameter |
+                AttributeTargets.Method  | AttributeTargets.Constructor)]
 public class InjectionAttribute : Attribute
 {
-    /// <summary>
-    /// Name to locate the resource to inject.
-    /// </summary>
-    public string? Name { get; init; }
+    public string Name { get; }
 
-    /// <summary>
-    /// Scopes to search for the injection.
-    /// </summary>
-    public Scopes Scopes { get; }
-
-    /// <summary>
-    /// Mark this member should use the specific identifier from the specific scopes to locate the resource to inject.
-    /// </summary>
-    /// <param name="scopes">Scopes to search in.</param>
-    public InjectionAttribute(Scopes scopes = Scopes.Any)
+    public InjectionAttribute(string? name = null)
     {
-        Scopes = scopes;
+        Name = name ?? "";
     }
 }
