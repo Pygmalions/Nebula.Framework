@@ -1,6 +1,6 @@
 # Nebula Framework
 
-Nebula is an micro-service platform, providing RPC (through gRPC), IoC, AOP and other mechanism.
+Nebula is an micro-service platform, providing RPC, IoC, AOP and other mechanism.
 This framework is mainly **designed for robots AI system development**,
 and its main concept is to provide developers with proven techniques which are commonly used in Web development.
 
