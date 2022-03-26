@@ -1,4 +1,7 @@
 using System;
+using System.IO;
+using System.Reflection;
+using System.Xml.Serialization;
 using NUnit.Framework;
 
 namespace Nebula.Reporting.Test;
@@ -8,30 +11,27 @@ public class ReportTest
     [Test]
     public void EventTest()
     {
-        var reported = false;
-        var message = "";
-
-        var reporter = new Reporter<string>();
-        reporter.Reported += (text, guid) =>
+        var received = false;
+        GlobalReporters.Warning.Received += document =>
         {
-            reported = true;
-            message = text;
+            if (document.Title == "Test report.")
+                received = true;
         };
-
-        reporter.Report("A message.");
-        Assert.AreEqual("A message.", message);
-        Assert.True(reported);
+        Report.Warning("Test report.", "No description.").GloballyNotify(false);
+        Assert.True(received);
     }
     
     [Test]
     public void ErrorTest()
     {
-        var reported = false;
-        Report.ErrorReporter.Reported += (error, id) =>
+        var received = false;
+        GlobalReporters.Error.Received += document =>
         {
-            reported = true;
+            if (document.Title == "Test report.")
+                received = true;
         };
-        Assert.Throws<Exception>(() => Report.Error(new Exception()));
-        Assert.True(reported);
+        Assert.Throws<ReportExceptionWrapper>(() =>
+            throw Report.Error("Test report.", "No description.").GloballyNotify().AsException());
+        Assert.True(received);
     }
 }

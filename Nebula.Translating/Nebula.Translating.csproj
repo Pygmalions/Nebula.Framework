@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <PackageVersion>0.1.0</PackageVersion>
+        <Title>Nebula Translating</Title>
+        <Authors>Pygmalions</Authors>
+        <Description>This library provides a mechanism to allow converting objects between non-related types. This is designed NOT for customized type converting, but for customized non-intrusive serialization and deserialization.</Description>
+        <Copyright>MIT License.</Copyright>
+        <PackageProjectUrl>https://github.com/Pygmalions/</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/Pygmalions/Nebula.Framework</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>Nebula;</PackageTags>
+        <PackageId>Pygmalions.Nebula.Translating</PackageId>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageIcon>Pygmalion.png</PackageIcon>
+        <PackageIconUrl>https://i.postimg.cc/j5md5fgW/Pygmalion.png</PackageIconUrl>
+        <PackageReleaseNotes>This library under rapid development, thus its API may be unstable. It is not recommended to use this library in production until the version of this library reaches 1.0.0.</PackageReleaseNotes>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="Pygmalion.png" Pack="true" PackagePath="\" />
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Pygmalions.Nebula.Extending" Version="0.2.0" />
+      <PackageReference Include="Pygmalions.Nebula.Reporting" Version="0.2.0" />
+    </ItemGroup>
+</Project>
