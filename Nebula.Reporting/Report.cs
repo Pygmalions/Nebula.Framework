@@ -105,6 +105,16 @@ public partial class Report : Exception
     public Report? InRelease => !DebugModeChecker.Value ? this : null;
 
     /// <summary>
+    /// To merge the conditional sequence into the builder chain mode.
+    /// </summary>
+    /// <param name="condition">Condition to check.</param>
+    /// <returns>
+    /// Returns this preset if the condition is true, otherwise null.
+    /// </returns>
+    public Report? If(bool condition)
+        => condition ? this : null;
+
+    /// <summary>
     /// Set the owner of this document.
     /// </summary>
     /// <param name="owner">The object which reports this document.</param>
