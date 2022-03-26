@@ -4,10 +4,10 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <PackageVersion>0.1.2</PackageVersion>
+        <PackageVersion>0.2.0</PackageVersion>
         <Title>Nebula Reporting</Title>
         <Authors>Pygmalions</Authors>
-        <Description>This library provides Error, Warning, and Message central report entrance and event center. It is a fundamental library of the Nebula Framework.</Description>
+        <Description>This library provides a modular document-style log or error reporting and handling mechanism.</Description>
         <Copyright>MIT License.</Copyright>
         <PackageProjectUrl>https://github.com/Pygmalions/</PackageProjectUrl>
         <RepositoryUrl>https://github.com/Pygmalions/Nebula.Framework</RepositoryUrl>
@@ -25,5 +25,4 @@
         <None Include="Pygmalion.png" Pack="true" PackagePath="\" />
         <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
-
 </Project>

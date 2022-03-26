@@ -2,40 +2,48 @@
 
 *Fundamental library of [Pygmalions](https://github.com/Pygmalions)' [Nebula Framework](https://github.com/Pygmalions/Nebula.Framework).*
 
-This library provides a central interface for error, warning, message
-reporting and handling.
-
+This library provides a modular document-style log or error reporting and handling mechanism.
+    
 ## How to Use
 
 In most common scenarios, just use the static class **Report**.
 ```C#
-// Report an error.
-throw Report.Error(yourException);
-// Report an warning.
-Report.Warning(yourException);
-// Report an message.
-Report.Message("This is a message.");
-// Report an debug message.
-Report.Debug("This message will only appear in debug mode.");
+// Report an warninig.
+Report.Warning("A Custom Warninig", "Here is the description", objectWhichReportsThis)
+    .AttachDetails("An details", relatedObject)
+    .GloballyNotify().InDebug?.Throw();
 ```
 
-Subscribe the **Reported** event to get notified when an error is reported.
+In this case, *objectWhichReportsThis* is the object which occurs this log or error;
+**AttachDetails** is an extensive method which allow you to attach related objects with a specific name.
+There are other extensive methods, such as **AttachGuid**.
+
+Method **GloballyNotify** will send this report to the global reports in static class **GlobalReporters**;
+**InDebug** will returns null in Release mode; **Throw** will wrap this report into an exception and throw it.
+
+The last three methods are really common, so we provide the extensive method **Handle** to notify the report
+and decide whether to throw an excpetion or not based on the level of the report.
+
+```c#
+// Report an warninig.
+Report.Warning("A Custom Warninig", "Here is the description", objectWhichReportsThis)
+    .AttachDetails("An details", relatedObject)
+    .Handle();
+```
+
+Subscribe the **Received** event to get notified when an error is reported.
 ```C#
-Report.ErrorReporter.Reported += yourAction;
+GlobalReporters.Error.Received += yourAction;
 ```
-
-Also, there are **MessageReporter** to handle message and debug message.
 
 ## Concepts
 
 ### Report Types
 
-There are three types of reports: Error, Warning, Message and Debug.
-- **Error**: An error is an Exception, and will be thrown after triggered the Reported event.
-- **Warning**: An warning is also an Exception, but will be thrown only in Debug mode; 
-in release mode, it will be converted into a text and reported into the MessageReporter.
-- **Message**: Plain text.
-- **Debug**: The message will be reported only in Debug mode.
+There are three types of reports: Error, Warning, and Message.
+- **Error**: What happened will stop the program from working normally.
+- **Warning**: The incident is tolerable, but still need to pay attention to it.
+- **Message**: Something normal but should be logged.
 
 #### Error or Warning?
 
@@ -46,14 +54,16 @@ then we recommend you to make it an **Warning**;
 - If the exception is caused by reason not related to user (Internet disconnection, system failure, etc),
 then it is better to make it an **Error**.
 
-### Associated GUID
+### Attachments
 
-All reporting methods in **Report** has an optional parameter *id*, 
-its type is Guid.
-You can specify it as the GUID of the transaction, or the object which reports this message;
-the error and message handler may categorize this stuff according to the GUID,
-and it also makes it easier to trace the information of a transaction or an action on
-a distributing system.
+Attachments allow you to attach optional information to a report to make it more detailed.
+The dictionary member **Attachments** contains all kinds of attachments with a unique key name.
+
+To support a kind of attachments, we suggest you provide a extensive method such as **AttachGuid**
+to help user to add a instance of this kind of attachments, and provide a extensive method such as **GetGuidAttachments**
+to get all instances of this kind of attachments.
+
+This library provides built-in support for *Details* and *Guid* attachments.
 
 ## Remarks
 

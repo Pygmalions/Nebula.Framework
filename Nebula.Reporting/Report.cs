@@ -1,108 +1,194 @@
-﻿using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace Nebula.Reporting;
 
 /// <summary>
-/// Static reporter helper class,
-/// provides global singleton instances of reporters.
-/// This static class is the default reporting center of the whole program.
+/// Report represents a report document.
+/// It inherits the exception thus it can be directly thrown.
 /// </summary>
-public static class Report
+public partial class Report : Exception
 {
     /// <summary>
-    /// Lazy singleton instance of error reporter.
+    /// Title of this report document.
     /// </summary>
-    private static readonly Lazy<Reporter<Exception>> SingletonErrorReporter =
-        new(() => new Reporter<Exception>());
+    public string Title { get; }
 
     /// <summary>
-    /// Lazy singleton instance of the message reporter.
+    /// Description of this report document.
     /// </summary>
-    private static readonly Lazy<Reporter<(string, Importance)>> SingletonMessageReporter =
-        new(() => new Reporter<(string, Importance)>());
+    public string Description { get; private set; }
 
     /// <summary>
-    /// Run-time debug mode checker.
-    /// This code will check whether the assembly is in debug mode or not in runtime.
-    /// Because this library will certainly be published in Release mode,
-    /// and we want to know whether the program which is using it is in Debug mode or not.
-    /// As a result, "DEBUG" macro will not help, and we have to check it in run-time.
+    /// Importance level of this report document.
     /// </summary>
-    private static readonly Lazy<bool> DebugModeEnable = new(() =>
-    {
-        var assembly = Assembly.GetEntryAssembly();
-        if (assembly == null) return false;
-        var debugAttributes = assembly.GetCustomAttribute<DebuggableAttribute>();
-        return debugAttributes != null && 
-               debugAttributes.DebuggingFlags.HasFlag(DebuggableAttribute.DebuggingModes.EnableEditAndContinue);
-    });
+    public Importance Level { get; private set; }
     
     /// <summary>
-    /// Reporter to handle error.
+    /// Object instance which reports this document.
     /// </summary>
-    public static Reporter<Exception> ErrorReporter => SingletonErrorReporter.Value;
+    public object? Owner { get; private set; }
 
     /// <summary>
-    /// Reporter to handle message.
+    /// Date time when this document is reported.
     /// </summary>
-    public static Reporter<(string Text, Importance Level)> MessageReporter => SingletonMessageReporter.Value;
+    public DateTime Time { get; private set; }
 
     /// <summary>
-    /// Whether enable the debug mode or not.
+    /// Attachment of this report document.
     /// </summary>
-    public static bool DebugMode => DebugModeEnable.Value;
+    public readonly Dictionary<string, object> Attachments = new();
 
     /// <summary>
-    /// Report an error.
-    /// An error is an exception which will be reported and thrown in any mode.
+    /// Construct a document with initial parameters.
     /// </summary>
-    /// <param name="exception">Exception to report and throw.</param>
-    /// <param name="id">ID associated with this error.</param>
-    /// <returns>The given exception.</returns>
-    [DoesNotReturn]
-    public static void Error(Exception exception, Guid? id = null)
+    /// <param name="title">Title of the document.</param>
+    /// <param name="description">Description of the document.</param>
+    /// <param name="owner">Owner of the document.</param>
+    /// <param name="level">Importance level.</param>
+    public Report(string title, string? description = null,
+        object? owner = null,
+        Importance level = Importance.Information) : 
+        base("Document exception: {title}")
     {
-        // Do not use AsyncReport here, otherwise the reporter may be interrupted by exception.
-        ErrorReporter.Report(exception, id);
-        throw exception;
+        Time = DateTime.Now;
+        Title = title;
+        Description = description ?? "";
+        Level = level;
+    }
+    
+    /// <summary>
+    /// Set the reporting date time.
+    /// </summary>
+    /// <param name="time">Time to set, if null, then <see cref="DateTime.Now"/> will be used.</param>
+    /// <returns>This document.</returns>
+    public Report SetTime(DateTime? time = null)
+    {
+        Time = time ?? DateTime.Now;
+        return this;
     }
 
     /// <summary>
-    /// Report an warning.
-    /// An warning is the exception which will be thrown in Debug mode.
+    /// Set the description of this document.
     /// </summary>
-    /// <param name="exception">Warning exception.</param>
-    /// <param name="id">ID associated with this warning.</param>
-    public static void Warning(Exception exception, Guid? id = null)
+    /// <param name="description">Description.</param>
+    /// <returns>This document.</returns>
+    public Report SetDescription(string description)
     {
-        if (DebugMode)
+        Description = description;
+        return this;
+    }
+
+    /// <summary>
+    /// Set the importance level of this document.
+    /// </summary>
+    /// <param name="importance">Importance level.</param>
+    /// <returns>This document.</returns>
+    public Report SetLevel(Importance importance)
+    {
+        Level = importance;
+        return this;
+    }
+
+    /// <summary>
+    /// Returns null if the entrance assembly is in Release mode.
+    /// Thus, following code will only works in Debug mode.
+    /// </summary>
+    /// <returns>Null if it is not in Debug mode.</returns>
+    public Report? InDebug => DebugModeChecker.Value ? this : null;
+    
+    /// <summary>
+    /// Returns null if the entrance assembly is in Debug mode.
+    /// Thus, following code will only works in Release mode.
+    /// </summary>
+    /// <returns>Null if it is not in Release mode.</returns>
+    public Report? InRelease => !DebugModeChecker.Value ? this : null;
+
+    /// <summary>
+    /// Set the owner of this document.
+    /// </summary>
+    /// <param name="owner">The object which reports this document.</param>
+    /// <returns>This document.</returns>
+    public Report SetOwner(object owner)
+    {
+        Owner = owner;
+        return this;
+    }
+
+    /// <summary>
+    /// Report this document to the global reporters in <see cref="GlobalReporters"/>.
+    /// <para>
+    /// <b>DO NOT</b> report this document asynchronously if it will be thrown, otherwise the reporter will
+    /// be interrupted by the exception, and some of the event handlers may not be able to finish their work.
+    /// </para>
+    /// </summary>
+    /// <param name="async">
+    /// Whether to report this document asynchronously or not.
+    /// If null, then the method will be auto decided, and it will choose the synchronous reporting method
+    /// when its Level is Importance.Error, otherwise the asynchronous way.
+    /// </param>
+    /// <returns>This document.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Invalid <see cref="Level"/> value.
+    /// </exception>
+    public Report GloballyNotify(bool? async = null)
+    {
+        async ??= Level != Importance.Error;
+        var reporter = Level switch
         {
-            MessageReporter.Report((exception.ToString(), Importance.Warning));
-            throw exception;
+            Importance.Error => GlobalReporters.Error,
+            Importance.Warning => GlobalReporters.Warning,
+            Importance.Information => GlobalReporters.Information,
+            _ => throw new ArgumentOutOfRangeException(nameof(Level))
+        };
+        if (async.Value)
+            reporter.ReportAsync(this);
+        else
+            reporter.Report(this);
+        return this;
+    }
+
+    /// <summary>
+    /// Wrap this report into an exception.
+    /// </summary>
+    /// <param name="innerException">Inner exception.</param>
+    /// <returns>Exception wrapper.</returns>
+    public ReportExceptionWrapper AsException(Exception? innerException = null)
+        => new ReportExceptionWrapper(this, innerException);
+
+    /// <summary>
+    /// Wrap this as an exception and throw it. <br />
+    /// It is not recommended to use this method in scenarios where it is certainly that
+    /// the exception will be thrown. <br />
+    /// This method is designed to be used after <see cref="InDebug"/> or <see cref="InRelease"/>.
+    /// </summary>
+    /// <param name="innerException">Inner exception.</param>
+    [DoesNotReturn]
+    public void Throw(Exception? innerException = null)
+        => throw new ReportExceptionWrapper(this, innerException);
+
+    /// <summary>
+    /// Describe this report in plain text.
+    /// Attachments will be <b>ignored</b>.
+    /// </summary>
+    /// <returns>Plain text description of this document.</returns>
+    public override string ToString()
+    {
+        var builder = new StringBuilder();
+        builder.Append(Level.ToString().ToUpper());
+        builder.Append(" - ");
+        builder.AppendLine(Title);
+        builder.Append(Time.ToString("yyyy-MM-dd HH:mm:ss:ms"));
+        if (Owner != null)
+        {
+            builder.Append(" @{");
+            builder.Append(Owner);
+            builder.Append('}');
         }
-        MessageReporter.AsyncReport((exception.ToString(), Importance.Warning));
-    }
 
-    /// <summary>
-    /// Report an message.
-    /// </summary>
-    /// <param name="text">Message text.</param>
-    /// <param name="id">ID associated with this message.</param>
-    public static void Message(string text, Guid? id = null)
-    {
-        MessageReporter.AsyncReport((text, Importance.Message), id);
-    }
+        builder.AppendLine();
+        builder.AppendLine(Description);
 
-    /// <summary>
-    /// Report an debug message.
-    /// </summary>
-    /// <param name="text">Debug text to report.</param>
-    /// <param name="id">ID associated with this debug message.</param>
-    public static void Debug(string text, Guid? id = null)
-    {
-        if (!DebugMode) return;
-        MessageReporter.AsyncReport((text, Importance.Debug), id);
+        return builder.ToString();
     }
 }
