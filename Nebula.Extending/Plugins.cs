@@ -8,15 +8,6 @@ namespace Nebula.Extending;
 /// </summary>
 public static class Plugins
 {
-    private static readonly Lazy<bool> DebugModeChecker = new(() =>
-    {
-        var assembly = Assembly.GetEntryAssembly();
-        if (assembly == null)
-            return false;
-        var debuggableAttribute = assembly.GetCustomAttribute<DebuggableAttribute>();
-        return debuggableAttribute is { IsJITTrackingEnabled: true };
-    });
-
     private static readonly Lazy<PluginRegistry> SingletonInstance = new(() =>
     {
         var registry = new PluginRegistry();
