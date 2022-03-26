@@ -51,7 +51,7 @@ It will scan plugin assemblies in loaded assemblies when its instance is firstly
 Then the result will be cached, but can be manually updated by **Update()** method.
 
 ```c#
-foreach (var (assemblyName, assembly) in PluginRegistry.Scanner.Plugins)
+foreach (var (assemblyName, (assembly, scanned)) in Plugins.Assemblies)
 {
     foreach (var type in assembly.GetTypes)
     {
