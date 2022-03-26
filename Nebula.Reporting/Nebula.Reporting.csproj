@@ -4,7 +4,7 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <PackageVersion>0.2.0</PackageVersion>
+        <PackageVersion>0.2.1</PackageVersion>
         <Title>Nebula Reporting</Title>
         <Authors>Pygmalions</Authors>
         <Description>This library provides a modular document-style log or error reporting and handling mechanism.</Description>
@@ -18,7 +18,6 @@
         <PackageIcon>Pygmalion.png</PackageIcon>
         <PackageIconUrl>https://i.postimg.cc/j5md5fgW/Pygmalion.png</PackageIconUrl>
         <PackageReleaseNotes>This library under rapid development, thus its API may be unstable. It is not recommended to use this library in production until the version of this library reaches 1.0.0.</PackageReleaseNotes>
-        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     </PropertyGroup>
 
     <ItemGroup>
