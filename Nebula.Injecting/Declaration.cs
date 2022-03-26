@@ -18,11 +18,9 @@ public sealed class Declaration : Entry
     public bool Temporary { get; private set; }
 
     /// <summary>
-    /// Instance cached for the next acquirement.
-    /// Container will <b>NOT</b> query and use this instance,
-    /// this instance is prepared for the source.
+    /// Customized additional data.
     /// </summary>
-    public object? CachedInstance { get; set; }
+    public object? AdditionalData { get; set; }
 
     /// <summary>
     /// Set whether this declaration is temporary and can be reclaimed by other sources or not.

@@ -1,5 +1,4 @@
-﻿using Nebula.Injecting.Presetting;
-using Nebula.Reporting;
+﻿using Nebula.Reporting;
 
 namespace Nebula.Injecting;
 
@@ -19,19 +18,47 @@ public sealed class Builder : Entry
     private bool _singletonEnable;
 
     /// <summary>
+    /// Creator used to acquire a new instance.
+    /// If the singleton mode is enabled, then its result will be stored and used in following accesses.
+    /// </summary>
+    private Func<object?>? _creator;
+
+    /// <summary>
     /// Set the instance of this preset.
     /// If the instance is set, the container will not generate new instance
     /// but use this instance directly.
-    /// This method will enable the singleton mode.
+    /// This method will <b>enable</b> the singleton mode. <br />
+    /// The bound instance will <b>not</b> be injected.
     /// </summary>
     /// <param name="instance">Instance to set.</param>
     public Builder BindInstance(object instance)
     {
         _singletonEnable = true;
         _singletonInstance = instance;
+
         return this;
     }
     
+    /// <summary>
+    /// Bind a creator to this builder.
+    /// This method will NOT auto enable the singleton mode.
+    /// The instance created by this creator will NOT be auto injected in <see cref="Build"/> method.
+    /// </summary>
+    /// <param name="creator">Creator to acquire new instance.</param>
+    public Builder BindCreator(Func<object> creator)
+    {
+        _creator = creator;
+        return this;
+    }
+    /// <summary>
+    /// Remove the creator from this builder.
+    /// </summary>
+    public Builder UnbindCreator()
+    {
+        _creator = null;
+        return this;
+    }
+
     /// <summary>
     /// Type to generate instance.
     /// </summary>
@@ -40,7 +67,7 @@ public sealed class Builder : Entry
     /// <summary>
     /// Arguments to pass to the constructor.
     /// </summary>
-    public IArray<object?>? Arguments { get; private set; }
+    public Func<object?[]>? Arguments { get; private set; }
 
     /// <summary>
     /// Set the class to generate instance with.
@@ -55,10 +82,14 @@ public sealed class Builder : Entry
 
     /// <summary>
     /// Bind the arguments to pass to the constructor.
+    /// <para>
+    /// Use <see cref="BindInstance"/> if the object to build is a language built-in value type which
+    /// does not have a constructor, such as int, long, double, etc.
+    /// </para>
     /// </summary>
     /// <param name="arguments">Arguments to use to generate instance.</param>
     /// <returns>This preset.</returns>
-    public Builder BindArguments(IArray<object?>? arguments)
+    public Builder BindArguments(Func<object?[]>? arguments)
     {
         Arguments = arguments;
         return this;
@@ -82,13 +113,20 @@ public sealed class Builder : Entry
     }
 
     /// <summary>
+    /// Default container for <see cref="Build"/> to use when no container is given to it.
+    /// </summary>
+    private readonly Container? _defaultContainer;
+
+    /// <summary>
     /// Constructor for a preset to create a builder insides it.
     /// </summary>
     /// <param name="type">Bound type.</param>
     /// <param name="preset">Preset to bind.</param>
-    internal Builder(Type type, Preset preset) : base(preset)
+    /// <param name="container">Default container to bind.</param>
+    internal Builder(Type type, Preset preset, Container? container = null) : base(preset)
     {
         Class = type;
+        _defaultContainer = container;
     }
     
     /// <summary>
@@ -110,26 +148,51 @@ public sealed class Builder : Entry
     ///     This method will do the injection with the given container if it is not null.
     /// </para>
     /// </summary>
-    /// <param name="container">Container to inject with, if null, the injection will be ignored.</param>
+    /// <param name="container">Container to inject with, if null, the passive injection will be ignored.</param>
     /// <returns>Instance, or null if failed.</returns>
-    public object? Build(Container? container)
+    public object? Build(Container? container = null)
     {
         if (_singletonInstance != null)
             return _singletonInstance;
 
-        if (Class.IsAbstract || Class.IsInterface)
+        var instance = _creator?.Invoke();
+        if (instance != null)
         {
-            Report.Warning(
-                new Exception($"Failed to build: Builder is bound to an abstract class or interface. {Class}"));
-            return null;
+            if (_singletonEnable)
+                _singletonInstance = instance;
+            return instance;
         }
+        
+        if (instance == null)
+        {
+            if (Class.IsAbstract || Class.IsInterface)
+            {
+                Report.Warning("Failed to Build", "Builder is bound to an abstract class or an interface.",
+                        this)
+                    .AttachDetails("Builder", this)
+                    .AttachDetails("Class", Class)
+                    .Handle();
+                return null;
+            }
 
-        var instance = Activator.CreateInstance(Class, Arguments?.Translate());
+            container ??= _defaultContainer;
 
+            if (container != null && Arguments == null)
+            {
+                instance = container.Inject(Class);
+            }
+            else
+                instance = Activator.CreateInstance(Class, Arguments?.Invoke());
+            
+        }
+        
         if (instance == null)
             return null;
         
-        container?.Inject(instance, Injection);
+        // Preset injection.
+        Injection.Inject(instance);
+        // Passive injection.
+        container?.Inject(instance);
 
         if (_singletonEnable)
             _singletonInstance = instance;

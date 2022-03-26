@@ -14,9 +14,10 @@ public abstract class Source
     {
         if (Container != null)
         {
-            Report.Warning(new Exception(
-                $"Failed to install {GetType()} to {container}: " +
-                "The source has already been installed to a container."));
+            Report.Warning("Failed to Install", "The source has been installed.", this)
+                .AttachDetails("TargetContainer", container)
+                .AttachDetails("CurrentContainer", container)
+                .Handle();
             return;
         }
             
@@ -31,9 +32,8 @@ public abstract class Source
     {
         if (Container == null)
         {
-            Report.Warning(new Exception(
-                $"Failed to uninstall {GetType()}: " +
-                "The source has not been installed."));
+            Report.Warning("Failed to Uninstall", "The source has not been installed.", this)
+                .Handle();
             return;
         }
         OnUninstall();
@@ -43,13 +43,13 @@ public abstract class Source
     /// Invoked when this source is installed to a container.
     /// Protected property <see cref="Container"/> is already available.
     /// </summary>
-    protected abstract void OnInstall();
+    protected virtual void OnInstall() {}
 
     /// <summary>
     /// Invoked when this source is installed to a container.
     /// Protected property <see cref="Container"/> is still available until this method returns.
     /// </summary>
-    protected abstract void OnUninstall();
+    protected virtual void OnUninstall() {}
 
     /// <summary>
     /// Overrides this method to implement the acquirement of the object.
@@ -58,7 +58,7 @@ public abstract class Source
     /// <param name="type">Type of the acquired object.</param>
     /// <param name="name">Name of the acquired object.</param>
     /// <returns>Acquired object instance.</returns>
-    protected internal abstract object Get(Declaration declaration, Type type, string name = "");
+    protected internal abstract object? Get(Declaration declaration, Type type, string name = "");
 
     /// <summary>
     /// Declare an object in the bound container.
@@ -71,11 +71,22 @@ public abstract class Source
     {
         if (Container != null) 
             return Container.Declare(this, type, name, trying);
-        Report.Warning(new Exception(
-            $"Failed to declare an object: " +
-            "The source has not been installed."));
+        Report.Warning("Failed to Declare", "The source has not been installed.", this)
+            .AttachDetails("Category", type)
+            .AttachDetails("Name", name)
+            .Handle();
         return null;
     }
+
+    /// <summary>
+    /// Declare an object in the bound container.
+    /// </summary>
+    /// <typeparam name="TObject">Category type of the object to declare.</typeparam>
+    /// <param name="name">Optional name of the object.</param>
+    /// <param name="trying">Whether allow this method to fail silently.</param>
+    /// <returns>Declaration instance, or null if this invocation failed.</returns>
+    protected Declaration? Declare<TObject>(string name = "", bool trying = false)
+        => Declare(typeof(TObject), name, trying);
     
     /// <summary>
     /// Revoke an object declaration in the bound container.
@@ -87,9 +98,10 @@ public abstract class Source
     {
         if (Container == null)
         {
-            Report.Warning(new Exception(
-                $"Failed to revoke a declaration: " +
-                "The source has not been installed."));
+            Report.Warning("Failed to Revoke", "The source has not been installed.", this)
+                .AttachDetails("Category", type)
+                .AttachDetails("Name", name)
+                .Handle();
             return;
         }
         Container.Revoke(this, type, name, trying);

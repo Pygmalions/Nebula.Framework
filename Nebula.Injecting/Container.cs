@@ -1,8 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using System.Reflection.Metadata.Ecma335;
-using Nebula.Injecting.Errors;
 using Nebula.Reporting;
 
 namespace Nebula.Injecting;
@@ -21,22 +19,37 @@ public class Container
 
     /// <summary>
     /// Get an object from this container.
+    /// If the entry is injectable, this method will do preset injection and passive injection on the given object.
     /// </summary>
-    /// <param name="type"></param>
-    /// <param name="name"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
+    /// <param name="type">Type of the object.</param>
+    /// <param name="name">Name of the object. Empty means that object with any name can match.</param>
+    /// <returns>Object matching the requirement, or null if not found.</returns>
     public virtual object? Get(Type type, string name = "")
     {
-        if (!_entries.TryGetValue(type, out var group) ||
-            !group.TryGetValue(name, out var preset))
+        if (!_entries.TryGetValue(type, out var group))
             return null;
+        
+        if (!group.TryGetValue(name, out var preset) && name == "")
+        {
+            return group.Values.Count > 0 ? group.Values.First() : null;
+        }
+
+        if (preset == null)
+            return null;
+        
         // Prefer to use the bound source to get the object.
         if (preset.BoundDeclaration == null) 
+            // The build method will do the injection.
             return preset.BoundBuilder?.Build(this);
         var instance = preset.BoundDeclaration.Source.Get(preset.BoundDeclaration, type, name);
-        if (preset.BoundDeclaration.Injectable)
-            Inject(instance, preset);
+        if (instance == null) 
+            return null;
+        if (!preset.BoundDeclaration.Injectable) 
+            return instance;
+        // Preset injection.
+        preset.Inject(instance);
+        // Passive injection.
+        Inject(instance);
         return instance;
     }
 
@@ -50,8 +63,10 @@ public class Container
     private ConcurrentDictionary<(Type, string), Declaration>? VerifySource(Source source)
     {
         if (!_sources.TryGetValue(source, out var declarations))
-            Report.Warning(new InvalidAccessError(this, source, 
-                "Source does not belongs to this container."));
+            Report.Warning("Container Access Denied",
+                    "Source does not belongs to this container.", owner: this)
+                .AttachDetails("Source", source)
+                .GloballyNotify().InDebug?.Throw();
         return declarations;
     }
 
@@ -63,7 +78,9 @@ public class Container
     {
         if (_sources.ContainsKey(source))
         {
-            Report.Warning(new ContainerError(this, "Source has already been added."));
+            Report.Warning("Failed to Add Source", "Source has already been added.",this)
+                .AttachDetails("Source", source)
+                .GloballyNotify().InDebug?.Throw();
             return;
         }
 
@@ -80,7 +97,10 @@ public class Container
     {
         if (!_sources.TryRemove(source, out var declarations))
         {
-            Report.Warning(new ContainerError(this, "Source does not belong to this container."));
+            Report.Warning("Failed to Remove Source",
+                    "Source does not belong to this container.", owner: this)
+                .AttachDetails("Source", source)
+                .Handle();
             return;
         }
         
@@ -145,8 +165,13 @@ public class Container
         }
 
         if (!trying)
-            Report.Error(new EntryError(this, category, name, "declare",
-                "Entry has already been declared by another source."));
+            Report.Warning("Failed to Revoke", "Entry has been declared by other source.", 
+                    this)
+                .AttachDetails("Source", source)
+                .AttachDetails("Declarer", existingDeclaration.Source)
+                .AttachDetails("Category", category)
+                .AttachDetails("Name", name)
+                .Handle();
         return null;
     }
 
@@ -165,18 +190,27 @@ public class Container
             return;
 
         if (!_entries.TryGetValue(category, out var group) ||
-            !group.TryGetValue(name, out var entry))
+            !group.TryGetValue(name, out var entry) || entry.BoundDeclaration == null)
         {
             if (trying) return;
-            Report.Warning(new EntryError(this, category, name, "revoke" ,
-                "Entry does not exit."));
+            Report.Warning("Failed to Revoke", "Declaration does not exist.", 
+                    this)
+                .AttachDetails("Source", source)
+                .AttachDetails("Category", category)
+                .AttachDetails("Name", name)
+                .Handle();
             return;
         }
         
-        if (entry.BoundDeclaration?.Source != source)
+        if (entry.BoundDeclaration.Source != source)
         {
-            Report.Warning(new EntryError(this, category, name, "revoke" ,
-                "Entry does not belongs to this source."));
+            Report.Warning("Failed to Revoke", "Declaration is not declared by this source.", 
+                    this)
+                .AttachDetails("Source", source)
+                .AttachDetails("Declarer", entry.BoundDeclaration.Source)
+                .AttachDetails("Category", category)
+                .AttachDetails("Name", name)
+                .Handle();
             return;
         }
         
@@ -197,75 +231,12 @@ public class Container
     {
         var group = _entries.GetOrAdd(category, 
             _ => new ConcurrentDictionary<string, Preset>());
-        return group.GetOrAdd(name, _ => new Preset(category));
-    }
-
-    /// <summary>
-    /// Use the objects in this container to inject an instance with the given preset.
-    /// This method is the inject method used by <see cref="Get"/>.
-    /// </summary>
-    /// <param name="instance">Instance to inject.</param>
-    /// <param name="preset">Preset to use.</param>
-    protected internal virtual void Inject(object instance, Preset preset)
-    {
-        var type = instance.GetType();
-        
-        foreach (var (name, item) in preset._injectedFields)
-        {
-            var field = 
-                type.GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            if (field == null)
-            {
-                Report.Warning(new InjectionFailure(type, name, 
-                    "Can not find a field with the given name."));
-                continue;
-            }
-            if (field.IsInitOnly)
-            {
-                Report.Warning(new InjectionFailure(type, field, "Field is initalize-only."));
-                continue;
-            }
-            field.SetValue(instance, item.Translate());
-        }
-        
-        foreach (var (name, item) in preset._injectedProperties)
-        {
-            var property = 
-                type.GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            if (property == null)
-            {
-                Report.Warning(new InjectionFailure(type, name, 
-                    "Can not find a property with the given name."));
-                continue;
-            }
-            if (!property.CanWrite)
-            {
-                Report.Warning(new InjectionFailure(type, property, "Property is read-only."));
-                continue;
-            }
-            property.SetValue(instance, item.Translate());
-        }
-        
-        foreach (var (name, items) in preset._injectedMethods)
-        {
-            var method = 
-                type.GetMethod(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            if (method == null)
-            {
-                Report.Warning(new InjectionFailure(type, name, 
-                    "Can not find a property with the given name."));
-                continue;
-            }
-            method.Invoke(instance, items?.Translate());
-        }
-        
-        // Inject the passive injections.
-        Inject(instance);
+        return group.GetOrAdd(name, _ => new Preset(category, this));
     }
 
     /// <summary>
     /// Use objects in this container to inject an instance without a preset.
-    /// This method <b>only</b> supports passive injection on public members.
+    /// This method <b>only</b> supports <b>passive injection</b> on public members.
     /// </summary>
     /// <param name="instance">Instance to inject.</param>
     public void Inject(object instance)
@@ -276,29 +247,37 @@ public class Container
             var injectionAttribute = member.GetCustomAttribute<InjectionAttribute>();
             if (injectionAttribute == null)
                 continue;
+            var injectionName = injectionAttribute.Name ?? "";
             switch (member)
             {
                 case FieldInfo field:
                     if (field.IsInitOnly)
                     {
-                        Report.Warning(new InjectionFailure(type, field, "Field is init-only."));
+                        Report.Warning("Field is init-only.").InDebug?.Throw();
                         continue;
                     }
-                    field.SetValue(instance, Get(field.FieldType, injectionAttribute.Name));
+                    field.SetValue(instance, Get(field.FieldType, injectionName));
                     break;
                 case PropertyInfo property:
                     if (!property.CanWrite)
                     {
-                        Report.Warning(new InjectionFailure(type, property, "Property is read-only."));
+                        Report.Warning("Injection Failure",
+                                "Property is read-only", this)
+                            .AttachDetails("Class", type)
+                            .AttachDetails("Member", property)
+                            .Handle();
                         continue;
                     }
-                    property.SetValue(instance, Get(property.PropertyType, injectionAttribute.Name));
+                    property.SetValue(instance, Get(property.PropertyType, injectionName));
                     break;
                 case MethodInfo method:
                     if (!PrepareArguments(method, out var arguments))
                     {
-                        Report.Warning(new InjectionFailure(type, method, 
-                            "Failed to find all parameters."));
+                        Report.Warning("Injection Failure",
+                                "Failed to find all parameters.", this)
+                            .AttachDetails("Class", type)
+                            .AttachDetails("Member", method)
+                            .Handle();
                         continue;
                     }
                     
@@ -310,23 +289,31 @@ public class Container
 
     /// <summary>
     /// Use objects in this container to inject an instance without a preset.
-    /// This method <b>only</b> supports constructor injection and passive injection on public members.
+    /// This method <b>only</b> supports <b>constructor injection</b> and <b>passive injection</b> on public members.
     /// </summary>
     /// <param name="type">Type of the object to instantiate and inject.</param>
     public object? Inject(Type type)
     {
-        ConstructorInfo? foundConstructor = null;
-        object?[]? foundArguments = null;
-        
+        ConstructorInfo? defaultConstructor = null;
+        (ConstructorInfo Constructor, object?[]? Arguments)? attributedConstructor = null;
+
         // Constructor inject.
         foreach (var constructor in type.GetConstructors())
         {
-            if (!PrepareArguments(constructor, out var arguments))
+            if (constructor.GetParameters().Length == 0)
+            {
+                defaultConstructor = constructor;
                 continue;
-            foundConstructor = constructor;
-            foundArguments = arguments;
-        }
+            }
 
+            if (constructor.GetCustomAttribute<InjectionAttribute>() == null ||
+                !PrepareArguments(constructor, out var arguments)) 
+                continue;
+            attributedConstructor = (constructor, arguments);
+        }
+        var foundConstructor = attributedConstructor?.Constructor ?? defaultConstructor;
+        var foundArguments = attributedConstructor?.Arguments;
+        
         if (foundConstructor == null)
             return null;
 
@@ -358,7 +345,8 @@ public class Container
             var parameterAttribute = parameter.GetCustomAttribute<InjectionAttribute>();
             var parameterNullable = parameter.ParameterType.IsGenericType &&
                                     parameter.ParameterType.GetGenericTypeDefinition() == typeof(Nullable<>);
-            var argument = Get(parameter.ParameterType, parameterAttribute?.Name ?? "");
+            var injectionName = parameterAttribute?.Name ?? "";
+            var argument = Get(parameter.ParameterType, injectionName);
             if (argument == null && !parameterNullable)
                 return false;
             argumentsList.Add(argument);

@@ -1,4 +1,5 @@
-﻿using Nebula.Injecting.Presetting;
+﻿using System.Reflection;
+using Nebula.Reporting;
 
 namespace Nebula.Injecting;
 
@@ -9,24 +10,19 @@ public class Preset
     internal Declaration? BoundDeclaration = null;
 
     /// <summary>
-    /// Lock to protect the injection information.
-    /// </summary>
-    internal readonly object InjectionLock = new();
-    
-    /// <summary>
     /// Field names and the corresponding values to inject.
     /// </summary>
-    internal readonly Dictionary<string, IItem<object>> _injectedFields = new();
+    private readonly Dictionary<string, Func<object>> _injectedFields = new();
     
     /// <summary>
     /// Property names and the corresponding values to inject.
     /// </summary>
-    internal readonly Dictionary<string, IItem<object>> _injectedProperties = new();
+    private readonly Dictionary<string, Func<object>> _injectedProperties = new();
     
     /// <summary>
     /// Method names and the corresponding arguments to invoke with.
     /// </summary>
-    internal readonly List<(string, IArray<object?>?)> _injectedMethods = new();
+    private readonly List<(string, Func<object?[]>?)> _injectedMethods = new();
 
     /// <summary>
     /// Preset the value of a field.
@@ -34,12 +30,9 @@ public class Preset
     /// <param name="name">Name of the field.</param>
     /// <param name="value">Value to preset.</param>
     /// <returns>This entry.</returns>
-    public Preset PresetField(string name, IItem<object> value)
+    public Preset PresetField(string name, Func<object> value)
     {
-        lock (InjectionLock)
-        {
-            _injectedFields[name] = value;
-        }
+        _injectedFields[name] = value;
         return this;
     }
     
@@ -49,12 +42,9 @@ public class Preset
     /// <param name="name">Name of the property.</param>
     /// <param name="value">Value to preset.</param>
     /// <returns>This entry.</returns>
-    public Preset PresetProperty(string name, IItem<object> value)
+    public Preset PresetProperty(string name, Func<object> value)
     {
-        lock (InjectionLock)
-        {
-            _injectedProperties[name] = value;
-        }
+        _injectedProperties[name] = value;
         return this;
     }
     
@@ -64,12 +54,9 @@ public class Preset
     /// <param name="name">Name of the method.</param>
     /// <param name="arguments">Arguments to pass the method.</param>
     /// <returns>This entry.</returns>
-    public Preset InvokeMethod(string name, IArray<object>? arguments)
+    public Preset InvokeMethod(string name, Func<object?[]>? arguments)
     {
-        lock (InjectionLock)
-        {
-            _injectedMethods.Add((name, arguments));
-        }
+        _injectedMethods.Add((name, arguments));
         return this;
     }
 
@@ -86,9 +73,12 @@ public class Preset
     
     private readonly Type _category;
 
-    public Preset(Type category)
+    private readonly Container? _container;
+
+    public Preset(Type category, Container? container = null)
     {
         _category = category;
+        _container = container;
     }
     
     /// <summary>
@@ -103,10 +93,14 @@ public class Preset
     /// <summary>
     /// Add a builder to this preset if it does not have one.
     /// </summary>
+    /// <param name="boundType">
+    /// Type for the builder to use,
+    /// if null, the builder will use the category to build.
+    /// </param>
     /// <returns>This preset.</returns>
-    public Preset SetBuilder(Type? boundType)
+    public Preset SetBuilder(Type? boundType = null)
     {
-        BoundBuilder ??= new Builder(boundType ?? _category, this);
+        BoundBuilder ??= new Builder(boundType ?? _category, this, _container);
         return this;
     }
 
@@ -118,5 +112,79 @@ public class Preset
     {
         BoundBuilder = null;
         return this;
+    }
+
+    /// <summary>
+    /// Inject an instance with the given preset. This method does not need a container.
+    /// This method is the inject method used by <see cref="Container.Get"/>.
+    /// </summary>
+    /// <param name="instance">Instance to inject.</param>
+    public void Inject(object instance)
+    {
+        var type = instance.GetType();
+        
+        foreach (var (name, item) in _injectedFields)
+        {
+            var field = 
+                type.GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            if (field == null)
+            {
+                Report.Warning("Injection Failure", "Can not find a field with the given name.")
+                    .AttachDetails("Class", type)
+                    .AttachDetails("Member", name)
+                    .Handle();
+                continue;
+            }
+            if (field.IsInitOnly)
+            {
+                Report.Warning("Injection Failure", "Field is init-only.")
+                    .AttachDetails("Class", type)
+                    .AttachDetails("Member", name)
+                    .Handle();
+                continue;
+            }
+            field.SetValue(instance, item.Invoke());
+        }
+        
+        foreach (var (name, item) in _injectedProperties)
+        {
+            var property = 
+                type.GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            if (property == null)
+            {
+                Report.Warning("Injection Failure",
+                        "Can not find a property with the given name.")
+                    .AttachDetails("Class", type)
+                    .AttachDetails("Member", name)
+                    .Handle();
+                continue;
+            }
+            if (!property.CanWrite)
+            {
+                Report.Warning("Injection Failure",
+                        "Property is read-only.")
+                    .AttachDetails("Class", type)
+                    .AttachDetails("Member", name)
+                    .Handle();
+                continue;
+            }
+            property.SetValue(instance, item.Invoke());
+        }
+        
+        foreach (var (name, items) in _injectedMethods)
+        {
+            var method = 
+                type.GetMethod(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            if (method == null)
+            {
+                Report.Warning("Injection Failure",
+                        "Can not find a method with the given name.")
+                    .AttachDetails("Class", type)
+                    .AttachDetails("Member", name)
+                    .Handle();
+                continue;
+            }
+            method.Invoke(instance, items?.Invoke());
+        }
     }
 }

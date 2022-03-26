@@ -11,10 +11,10 @@
                 AttributeTargets.Method  | AttributeTargets.Constructor)]
 public class InjectionAttribute : Attribute
 {
-    public string Name { get; }
+    public string? Name { get; }
 
     public InjectionAttribute(string? name = null)
     {
-        Name = name ?? "";
+        Name = name;
     }
 }
