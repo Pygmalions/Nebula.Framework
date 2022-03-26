@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Concurrent;
 using System.Reflection;
 
 namespace Nebula.Extending;
@@ -11,19 +8,26 @@ public partial class PluginRegistry
     /// <summary>
     /// Assembly name to assembly mapping dictionary of plugin assemblies.
     /// </summary>
-    private readonly ConcurrentDictionary<AssemblyName, Assembly> _plugins = new();
+    private readonly ConcurrentDictionary<AssemblyName, (Assembly, bool Scanned)> _plugins = new();
     
     /// <summary>
     /// Registered plugins.
     /// Allow to do in-assembly resource discovery on these assemblies.
     /// </summary>
-    public IReadOnlyDictionary<AssemblyName, Assembly> Plugins => _plugins;
+    public IReadOnlyDictionary<AssemblyName, (Assembly, bool Scanned)> Plugins => _plugins;
 
     /// <summary>
     /// Rescan all loaded assemblies and update the plugins list.
     /// </summary>
     public void Update()
     {
+        // Remove all scanned plugins.
+        foreach (var (name, (assembly, scanned)) in _plugins)
+        {
+            if (scanned)
+                _plugins.TryRemove(name, out _);
+        }
+        
         // Load and scan all plugin assemblies.
         var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
 
@@ -68,7 +72,7 @@ public partial class PluginRegistry
         {
             var name = assembly.GetName().Name;
             if (name != null && allowedNames.ContainsKey(name))
-                RegisterPlugin(assembly);
+                _plugins.TryAdd(assembly.GetName(), (assembly, true));
         }
     }
     
@@ -79,7 +83,7 @@ public partial class PluginRegistry
     /// <param name="assembly">Assembly to register.</param>
     public void RegisterPlugin(Assembly assembly)
     {
-        _plugins.TryAdd(assembly.GetName(), assembly);
+        _plugins.TryAdd(assembly.GetName(), (assembly, false));
     }
 
     /// <summary>
