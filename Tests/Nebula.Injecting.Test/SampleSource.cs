@@ -6,7 +6,7 @@ public class SampleSource : Source
 {
     protected override void OnInstall()
     {
-        Declare<int>("SampleNumber")?.SetInjectable(false);
+        Declare<int>("SampleNumber")?.SetSingleton(true);
     }
     
     protected override object? Get(Declaration declaration, Type type, string name = "")

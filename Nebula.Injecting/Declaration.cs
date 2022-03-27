@@ -3,9 +3,14 @@
 public sealed class Declaration : Entry
 {
     /// <summary>
+    /// Cached singleton instance.
+    /// </summary>
+    public object? SingletonInstance { get; internal set; }
+    
+    /// <summary>
     /// Whether the object gotten from this source should be injected.
     /// </summary>
-    public bool Injectable { get; private set; }
+    public bool Singleton { get; private set; }
 
     /// <summary>
     /// Source that provides this instance.
@@ -34,14 +39,14 @@ public sealed class Declaration : Entry
     }
 
     /// <summary>
-    /// Set whether this declaration is injectable or not.
-    /// If true, the container will inject the instance acquired from the source.
+    /// Set whether this object works in the singleton mode or not.
+    /// If true, then the container will use the cached result for following requirements.
     /// </summary>
-    /// <param name="injectable">Whether the container should be injected or not.</param>
+    /// <param name="singleton">Whether this object works in the singleton mode or not.</param>
     /// <returns>This declaration.</returns>
-    public Declaration SetInjectable(bool injectable)
+    public Declaration SetSingleton(bool singleton)
     {
-        Injectable = injectable;
+        Singleton = singleton;
         return this;
     }
 

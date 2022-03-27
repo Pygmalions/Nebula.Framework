@@ -29,9 +29,14 @@ public class Container
         if (!_entries.TryGetValue(type, out var group))
             return null;
         
-        if (!group.TryGetValue(name, out var preset) && name == "")
+        // Name matching.
+        if (!group.TryGetValue(name, out var preset))
         {
-            return group.Values.Count > 0 ? group.Values.First() : null;
+            // Try to mach with "*"
+            if (!group.TryGetValue("*", out preset))
+                // If name is empty, match any entry.
+                if (name.Length == 0)
+                    return group.Values.Count > 0 ? group.Values.First() : null;
         }
 
         if (preset == null)
@@ -41,15 +46,23 @@ public class Container
         if (preset.BoundDeclaration == null) 
             // The build method will do the injection.
             return preset.BoundBuilder?.Build(this);
+
+        // Check cached singleton instance.
+        if (preset.BoundDeclaration.SingletonInstance != null)
+            return preset.BoundDeclaration.SingletonInstance;
         var instance = preset.BoundDeclaration.Source.Get(preset.BoundDeclaration, type, name);
         if (instance == null) 
             return null;
-        if (!preset.BoundDeclaration.Injectable) 
-            return instance;
+        
         // Preset injection.
         preset.Inject(instance);
         // Passive injection.
         Inject(instance);
+
+        // Cache the singleton instance.
+        if (!preset.BoundDeclaration.Singleton)
+            preset.BoundDeclaration.SingletonInstance = instance;
+        
         return instance;
     }
 
@@ -66,7 +79,7 @@ public class Container
             Report.Warning("Container Access Denied",
                     "Source does not belongs to this container.", owner: this)
                 .AttachDetails("Source", source)
-                .GloballyNotify().InDebug?.Throw();
+                .Handle();
         return declarations;
     }
 
@@ -80,7 +93,7 @@ public class Container
         {
             Report.Warning("Failed to Add Source", "Source has already been added.",this)
                 .AttachDetails("Source", source)
-                .GloballyNotify().InDebug?.Throw();
+                .Handle();
             return;
         }
 
@@ -122,7 +135,11 @@ public class Container
     /// </summary>
     /// <param name="source">Source which wants to declare an object.</param>
     /// <param name="category">Category of the object.</param>
-    /// <param name="name">Optional name of the object.</param>
+    /// <param name="name">
+    /// Optional name of the object.
+    /// Being empty means that this object is default for non-named requirements;
+    /// being "*" means that the source will generate instance for requirements which can not match any entry.
+    /// </param>
     /// <param name="trying">Whether allow this method to fail silently.</param>
     /// <returns>Declaration instance, or null if this method failed silently.</returns>
     protected internal virtual Declaration? Declare(Source source, Type category, string name = "",

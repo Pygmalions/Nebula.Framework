@@ -66,11 +66,30 @@ public abstract class Source
     /// <param name="type">Category type of the object to declare.</param>
     /// <param name="name">Optional name of the object.</param>
     /// <param name="trying">Whether allow this method to fail silently.</param>
+    /// <param name="accurate">
+    /// If true, only declare the given type;
+    /// if false, this method will also declare its base types as temporary (type of object is not included.).
+    /// If the given type is a interface, then this option is ignored and considered as true.
+    /// </param>
+    /// <param name="singleton">If accurate is false, then this one must be specified.</param>
     /// <returns>Declaration instance, or null if this invocation failed.</returns>
-    protected Declaration? Declare(Type type, string name = "", bool trying = false)
+    protected Declaration? Declare(Type type, string name = "",
+        bool trying = false, bool accurate = true, bool singleton = true)
     {
-        if (Container != null) 
-            return Container.Declare(this, type, name, trying);
+        if (Container != null)
+        {
+            if (accurate || type.IsInterface)
+                return Container.Declare(this, type, name, trying)?.SetSingleton(singleton);
+            for (var baseType = type.BaseType;
+                 baseType != null && baseType != typeof(object);
+                 baseType = baseType.BaseType)
+            {
+                Container.Declare(this, baseType, name, true)
+                    ?.SetSingleton(singleton).SetTemporary(true);
+            }
+            return Container.Declare(this, type, name, trying)?.SetSingleton(singleton);
+        }
+           
         Report.Warning("Failed to Declare", "The source has not been installed.", this)
             .AttachDetails("Category", type)
             .AttachDetails("Name", name)
