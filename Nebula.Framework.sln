@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Translating.Test", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Injecting.Test", "Tests\Nebula.Injecting.Test\Nebula.Injecting.Test.csproj", "{A8D1F3E5-1073-481C-B656-D014CA5E8325}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Report.DebugChecker.Test", "Tests\Nebula.Report.DebugChecker.Test\Nebula.Report.DebugChecker.Test.csproj", "{5BC6D882-9B4F-4FE3-ADA2-3D76077A7913}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{A8D1F3E5-1073-481C-B656-D014CA5E8325}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8D1F3E5-1073-481C-B656-D014CA5E8325}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8D1F3E5-1073-481C-B656-D014CA5E8325}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5BC6D882-9B4F-4FE3-ADA2-3D76077A7913}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BC6D882-9B4F-4FE3-ADA2-3D76077A7913}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BC6D882-9B4F-4FE3-ADA2-3D76077A7913}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BC6D882-9B4F-4FE3-ADA2-3D76077A7913}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,5 +70,6 @@ Global
 		{082E8665-8BD6-49D6-A1EE-51B86E95AFCF} = {871EC9F6-76F2-48BF-A447-3ADF4E6A630C}
 		{E54B7CFF-96F9-48FD-858B-618FDED57A86} = {871EC9F6-76F2-48BF-A447-3ADF4E6A630C}
 		{A8D1F3E5-1073-481C-B656-D014CA5E8325} = {871EC9F6-76F2-48BF-A447-3ADF4E6A630C}
+		{5BC6D882-9B4F-4FE3-ADA2-3D76077A7913} = {871EC9F6-76F2-48BF-A447-3ADF4E6A630C}
 	EndGlobalSection
 EndGlobal
