@@ -4,16 +4,16 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <PackageVersion>0.2.2</PackageVersion>
-        <Title>Nebula Reporting</Title>
+        <PackageVersion>0.1.0</PackageVersion>
+        <Title>Nebula Pooling</Title>
         <Authors>Pygmalions</Authors>
-        <Description>This library provides a modular document-style log or error reporting and handling mechanism.</Description>
+        <Description>This library provides object pools.</Description>
         <Copyright>MIT License.</Copyright>
         <PackageProjectUrl>https://github.com/Pygmalions/</PackageProjectUrl>
         <RepositoryUrl>https://github.com/Pygmalions/Nebula.Framework</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <PackageTags>Nebula Exception Log</PackageTags>
-        <PackageId>Pygmalions.Nebula.Reporting</PackageId>
+        <PackageTags>Nebula Pool Reuse</PackageTags>
+        <PackageId>Pygmalions.Nebula.Pooling</PackageId>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageIcon>Pygmalion.png</PackageIcon>
         <PackageIconUrl>https://i.postimg.cc/j5md5fgW/Pygmalion.png</PackageIconUrl>
@@ -21,12 +21,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Include="Pygmalion.png" Pack="true" PackagePath="\" />
-        <None Include="README.md" Pack="true" PackagePath="\" />
+      <None Update="README.md">
+        <Pack>true</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
+      <None Update="Pygmalion.png">
+        <Pack>true</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
     </ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Include="Pygmalions.Nebula.Pooling" Version="0.1.0" />
-    </ItemGroup>
-    
 </Project>

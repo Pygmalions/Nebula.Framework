@@ -21,6 +21,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Injecting.Test", "Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Report.DebugChecker.Test", "Tests\Nebula.Report.DebugChecker.Test\Nebula.Report.DebugChecker.Test.csproj", "{5BC6D882-9B4F-4FE3-ADA2-3D76077A7913}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Proxying", "Nebula.Proxying\Nebula.Proxying.csproj", "{C836E064-7378-4557-A518-3E2EC3315BB1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nebula.Pooling", "Nebula.Pooling\Nebula.Pooling.csproj", "{A391B7D4-44E4-481E-B5EC-5B7BE8D72129}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +63,14 @@ Global
 		{5BC6D882-9B4F-4FE3-ADA2-3D76077A7913}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BC6D882-9B4F-4FE3-ADA2-3D76077A7913}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BC6D882-9B4F-4FE3-ADA2-3D76077A7913}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C836E064-7378-4557-A518-3E2EC3315BB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C836E064-7378-4557-A518-3E2EC3315BB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C836E064-7378-4557-A518-3E2EC3315BB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C836E064-7378-4557-A518-3E2EC3315BB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A391B7D4-44E4-481E-B5EC-5B7BE8D72129}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A391B7D4-44E4-481E-B5EC-5B7BE8D72129}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A391B7D4-44E4-481E-B5EC-5B7BE8D72129}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A391B7D4-44E4-481E-B5EC-5B7BE8D72129}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

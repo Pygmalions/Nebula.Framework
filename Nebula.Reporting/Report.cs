@@ -12,27 +12,27 @@ public partial class Report : Exception
     /// <summary>
     /// Title of this report document.
     /// </summary>
-    public string Title { get; }
+    public string Title { get; protected set; }
 
     /// <summary>
     /// Description of this report document.
     /// </summary>
-    public string Description { get; private set; }
+    public string Description { get; protected set; }
 
     /// <summary>
     /// Importance level of this report document.
     /// </summary>
-    public Importance Level { get; private set; }
+    public Importance Level { get; protected set; }
     
     /// <summary>
     /// Object instance which reports this document.
     /// </summary>
-    public object? Owner { get; private set; }
+    public object? Owner { get; protected set; }
 
     /// <summary>
     /// Date time when this document is reported.
     /// </summary>
-    public DateTime Time { get; private set; }
+    public DateTime Time { get; protected set; }
 
     /// <summary>
     /// Attachment of this report document.
