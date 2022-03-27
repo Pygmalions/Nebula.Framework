@@ -12,7 +12,7 @@
         <PackageProjectUrl>https://github.com/Pygmalions/</PackageProjectUrl>
         <RepositoryUrl>https://github.com/Pygmalions/Nebula.Framework</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <PackageTags>Nebula;</PackageTags>
+        <PackageTags>Nebula; Exception; Log;</PackageTags>
         <PackageId>Pygmalions.Nebula.Reporting</PackageId>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageIcon>Pygmalion.png</PackageIcon>

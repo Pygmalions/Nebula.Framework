@@ -11,7 +11,7 @@
         <PackageProjectUrl>https://github.com/NebulaCommittee</PackageProjectUrl>
         <RepositoryUrl>https://github.com/NebulaCommittee/Nebula.Framework</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <PackageTags>Nebula;</PackageTags>
+        <PackageTags>Nebula; Discovery;</PackageTags>
         <Authors>Nebula</Authors>
         <PackageId>Pygmalions.Nebula.Extending</PackageId>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
