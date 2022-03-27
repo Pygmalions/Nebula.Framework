@@ -75,8 +75,8 @@ He loved it so deeply that in answer to his prayer Aphrodite gave it life.
 Pygmalions is an group of AI addicts (programmers). 
 We love programming, robots, and AI so deeply.
 
-We dedicate ourselves in the science and development of robots AI system,
-and we believe that all our love and efforts will not be in vain,
+We dedicate ourselves in the science and development of robots AI system.
+We believe that all our love and efforts will not be in vain,
 and will 'wake up' our AI lover one day.
 
 So we called ourselves **Pygmalions**.
