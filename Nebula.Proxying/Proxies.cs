@@ -6,7 +6,7 @@
 public static class Proxies
 {
     private static readonly Lazy<ProxyGenerator> SingletonInstance = 
-        new Lazy<ProxyGenerator>(() => new ProxyGenerator());
+        new(() => new ProxyGenerator());
 
     /// <summary>
     /// Use the singleton instance to get the proxy of a proxied type.

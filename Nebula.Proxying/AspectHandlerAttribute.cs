@@ -17,7 +17,7 @@ public class AspectHandlerAttribute : Attribute
     /// </param>
     public AspectHandlerAttribute(params Type[] triggerAttributes)
     {
-        var baseAttributeType = typeof(Attribute);
+        var baseAttributeType = typeof(AspectTrigger);
         var availableTriggerAttribute = new HashSet<Type>();
         foreach (var attributeType in triggerAttributes)
         {
@@ -28,7 +28,7 @@ public class AspectHandlerAttribute : Attribute
             }
             Report.Warning("Invalid Aspect",
                 "Attribute for an aspect handler to handle is not derived " +
-                $"from the {nameof(AspectHandlerAttribute)}, " +
+                $"from the {nameof(AspectTrigger)}, " +
                 "thus this handler will never be triggered by this attribute.")
                 .AttachDetails("Attribute", attributeType)
                 .Handle();

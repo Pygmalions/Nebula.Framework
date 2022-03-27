@@ -81,7 +81,7 @@ public partial class ProxyGenerator
             {
                 Report.Warning("Invalid Aspect",
                         "Handler will not be triggered by this aspect, for it is not derived " +
-                        $"from {nameof(AspectHandlerAttribute)}.")
+                        $"from {nameof(AspectTrigger)}.")
                     .AttachDetails("Handler", handlerType)
                     .AttachDetails("Aspect", triggerAttributeType)
                     .Handle();
