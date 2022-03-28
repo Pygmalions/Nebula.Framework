@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Nebula.Extending;
-using Nebula.Proxying;
 
 [assembly: PluginAssembly]
 
