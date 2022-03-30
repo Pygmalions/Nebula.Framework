@@ -62,13 +62,9 @@ public class Pool<TObject> : IPool<TObject> where TObject : class
     /// </returns>
     public virtual bool Store(TObject instance)
     {
-        if (Cleaner?.Invoke(instance) != false && (MaxCount == 0 || _instances.Count < MaxCount))
-        {
-            _instances.Add(instance);
-            return true;
-        }
-        if (instance is IDisposable disposable)
-            disposable.Dispose();
-        return false;
+        if (Cleaner?.Invoke(instance) == false || (MaxCount != 0 && _instances.Count >= MaxCount)) 
+            return false;
+        _instances.Add(instance);
+        return true;
     }
 }
