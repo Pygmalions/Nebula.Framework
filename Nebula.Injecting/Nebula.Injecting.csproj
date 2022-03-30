@@ -26,11 +26,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Pygmalions.Nebula.Reporting" Version="0.2.1" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\Nebula.Reporting\Nebula.Reporting.csproj" />
+      <PackageReference Include="Pygmalions.Nebula.Reporting" Version="0.3.0" />
     </ItemGroup>
 
 </Project>
