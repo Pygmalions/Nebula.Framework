@@ -7,32 +7,32 @@ namespace Nebula.Reporting;
 /// Report represents a report document.
 /// It inherits the exception thus it can be directly thrown.
 /// </summary>
-public partial class Report : Exception
+public partial class Report
 {
     /// <summary>
     /// Title of this report document.
     /// </summary>
-    public string Title { get; protected set; }
+    public string Title { get; private set; }
 
     /// <summary>
     /// Description of this report document.
     /// </summary>
-    public string Description { get; protected set; }
+    public string Description { get; private set; }
 
     /// <summary>
     /// Importance level of this report document.
     /// </summary>
-    public Importance Level { get; protected set; }
+    public Importance Level { get; private set; }
     
     /// <summary>
     /// Object instance which reports this document.
     /// </summary>
-    public object? Owner { get; protected set; }
+    public object? Owner { get; private set; }
 
     /// <summary>
     /// Date time when this document is reported.
     /// </summary>
-    public DateTime Time { get; protected set; }
+    public DateTime Time { get; private set; }
 
     /// <summary>
     /// Attachment of this report document.
@@ -46,13 +46,12 @@ public partial class Report : Exception
     /// <param name="description">Description of the document.</param>
     /// <param name="owner">Owner of the document.</param>
     /// <param name="level">Importance level.</param>
-    public Report(string title, string? description = null,
+    public Report(string? title = null, string? description = null,
         object? owner = null,
-        Importance level = Importance.Information) : 
-        base("Document exception: {title}")
+        Importance level = Importance.Information)
     {
         Time = DateTime.Now;
-        Title = title;
+        Title = title ?? "Untitled";
         Description = description ?? "";
         Level = level;
     }
@@ -68,6 +67,17 @@ public partial class Report : Exception
         return this;
     }
 
+    /// <summary>
+    /// Set the title of this document.
+    /// </summary>
+    /// <param name="title">Title.</param>
+    /// <returns>This document.</returns>
+    public Report SetTitle(string title)
+    {
+        Title = title;
+        return this;
+    }
+    
     /// <summary>
     /// Set the description of this document.
     /// </summary>
@@ -91,28 +101,43 @@ public partial class Report : Exception
     }
 
     /// <summary>
-    /// Returns null if the entrance assembly is in Release mode.
-    /// Thus, following code will only works in Debug mode.
+    /// Invoke the handler if the entry assembly is in debug mode.
     /// </summary>
-    /// <returns>Null if it is not in Debug mode.</returns>
-    public Report? InDebug => DebugModeChecker.Value ? this : null;
+    /// <param name="handler">Action to invoke.</param>
+    /// <returns>This report.</returns>
+    public Report OnDebug(Action<Report> handler)
+    {
+        if (DebugModeChecker.Value)
+            handler(this);
+        return this;
+    }
     
     /// <summary>
-    /// Returns null if the entrance assembly is in Debug mode.
-    /// Thus, following code will only works in Release mode.
+    /// Invoke the handler if the entry assembly is in release mode.
     /// </summary>
-    /// <returns>Null if it is not in Release mode.</returns>
-    public Report? InRelease => !DebugModeChecker.Value ? this : null;
+    /// <param name="handler">Action to invoke.</param>
+    /// <returns>This report.</returns>
+    public Report OnRelease(Action<Report> handler)
+    {
+        if (!DebugModeChecker.Value)
+            handler(this);
+        return this;
+    }
 
     /// <summary>
-    /// To merge the conditional sequence into the builder chain mode.
+    /// Invoke the handler action if the condition is true.
     /// </summary>
     /// <param name="condition">Condition to check.</param>
+    /// <param name="handler">Handler action.</param>
     /// <returns>
     /// Returns this preset if the condition is true, otherwise null.
     /// </returns>
-    public Report? If(bool condition)
-        => condition ? this : null;
+    public Report If(bool condition, Action<Report> handler)
+    {
+        if (condition)
+            handler(this);
+        return this;
+    }
 
     /// <summary>
     /// Set the owner of this document.
@@ -141,7 +166,7 @@ public partial class Report : Exception
     /// <exception cref="ArgumentOutOfRangeException">
     /// Invalid <see cref="Level"/> value.
     /// </exception>
-    public Report GloballyNotify(bool? async = null)
+    public Report Notify(bool? async = null)
     {
         async ??= Level != Importance.Error;
         var reporter = Level switch
@@ -163,8 +188,8 @@ public partial class Report : Exception
     /// </summary>
     /// <param name="innerException">Inner exception.</param>
     /// <returns>Exception wrapper.</returns>
-    public ReportExceptionWrapper AsException(Exception? innerException = null)
-        => new ReportExceptionWrapper(this, innerException);
+    public ReportException AsException(Exception? innerException = null)
+        => new (this, innerException);
 
     /// <summary>
     /// Wrap this as an exception and throw it. <br />
@@ -175,7 +200,7 @@ public partial class Report : Exception
     /// <param name="innerException">Inner exception.</param>
     [DoesNotReturn]
     public void Throw(Exception? innerException = null)
-        => throw new ReportExceptionWrapper(this, innerException);
+        => throw new ReportException(this, innerException);
 
     /// <summary>
     /// Describe this report in plain text.

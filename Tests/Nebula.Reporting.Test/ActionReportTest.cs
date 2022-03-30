@@ -11,9 +11,9 @@ public class ActionReportTest
         var reported = false;
         GlobalReporters.Error.Received += _ => reported = true;
 
-        Assert.Throws<ReportExceptionWrapper>(() => ActionReport.Begin()
+        Assert.Throws<ReportException>(() => ActionReport.BeginAction()
             .DoAction(() => throw new Exception())
-            .Finish());
+            .FinishAction());
         
         Assert.True(reported);
     }
@@ -24,9 +24,9 @@ public class ActionReportTest
         var reported = false;
         GlobalReporters.Error.Received += _ => reported = true;
 
-        Assert.DoesNotThrow(() => ActionReport.Begin()
+        Assert.DoesNotThrow(() => ActionReport.BeginAction()
             .DoAction(() => throw new Exception())
-            .Failed?.GloballyNotify(false));
+            .OnFailed(report => report.Notify(false)));
         
         Assert.True(reported);
     }

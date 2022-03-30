@@ -1,7 +1,3 @@
-using System;
-using System.IO;
-using System.Reflection;
-using System.Xml.Serialization;
 using NUnit.Framework;
 
 namespace Nebula.Reporting.Test;
@@ -17,7 +13,7 @@ public class ReportTest
             if (document.Title == "Test report.")
                 received = true;
         };
-        Report.Warning("Test report.", "No description.").GloballyNotify(false);
+        Report.Warning("Test report.", "No description.").Notify(false);
         Assert.True(received);
     }
     
@@ -30,8 +26,8 @@ public class ReportTest
             if (document.Title == "Test report.")
                 received = true;
         };
-        Assert.Throws<ReportExceptionWrapper>(() =>
-            throw Report.Error("Test report.", "No description.").GloballyNotify().AsException());
+        Assert.Throws<ReportException>(() =>
+            throw Report.Error("Test report.", "No description.").Notify().AsException());
         Assert.True(received);
     }
 }

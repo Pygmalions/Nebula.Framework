@@ -3,7 +3,7 @@
 /// <summary>
 /// This exception can wrap a document into an exception.
 /// </summary>
-public class ReportExceptionWrapper : Exception
+public class ReportException : Exception
 {
     /// <summary>
     /// The attached document.
@@ -15,7 +15,7 @@ public class ReportExceptionWrapper : Exception
     /// </summary>
     /// <param name="document">Document attached to this exception.</param>
     /// <param name="innerException">Inner exception within this exception.</param>
-    public ReportExceptionWrapper(Report document, Exception? innerException = null) : base(
+    public ReportException(Report document, Exception? innerException = null) : base(
         $"(Report) {document.Title}: {document.Description}.", innerException)
     {
         Document = document;

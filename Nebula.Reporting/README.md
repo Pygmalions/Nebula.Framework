@@ -11,7 +11,7 @@ In most common scenarios, just use the static class **Report**.
 // Report an warninig.
 Report.Warning("A Custom Warninig", "Here is the description", objectWhichReportsThis)
     .AttachDetails("An details", relatedObject)
-    .GloballyNotify().InDebug?.Throw();
+    .Notify().OnDebug(report => report.Throw());
 ```
 
 In this case, *objectWhichReportsThis* is the object which occurs this log or error;
@@ -65,7 +65,26 @@ to get all instances of this kind of attachments.
 
 This library provides built-in support for *Details* and *Guid* attachments.
 
+### Action Report
+
+Action report is introduced to capture normal exceptions, and wrap them in a report.
+
+If some part of your code may throw normal exceptions, and you want to wrap them into reports and attach some attachments,
+then you can use the action report.
+
+```c#
+ActionReport.BeginAction("Dangerous Code", this)
+    .DoAction(()=> yourCodeHere)
+    .FinishAction();
+```
+
+The method **FinishAction** will notify the global report if an exception is thrown by the inner action, 
+and it will rethrow the **ReportException** with this report and the captured exception as its inner exception.
+If all actions succeeded, then this report will be returned into the reports pool by **FinishAction**.
+
 ## Remarks
+
+**NOT** compatible with versions order than 0.3.0.
 
 This library is under rapid development, thus its API may be very unstable, 
 **DO NOT** use it in the production environment,
