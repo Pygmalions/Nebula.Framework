@@ -264,6 +264,8 @@ There are two things you should be aware of:
 
 ### Unstable API
 
+**NOT** compatible with versions older than 0.2.0.
+
 This library is under rapid development, thus its API may be very unstable, 
 **DO NOT** use it in the production environment,
 until its version reaches 1.0.0.

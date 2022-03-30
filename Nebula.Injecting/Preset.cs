@@ -1,190 +1,168 @@
-﻿using System.Reflection;
-using Nebula.Reporting;
+﻿using Nebula.Reporting;
 
 namespace Nebula.Injecting;
 
 public class Preset
 {
-    internal Builder? BoundBuilder = null;
+    private readonly Dictionary<string, Func<object>> _fields = new();
 
-    internal Declaration? BoundDeclaration = null;
+    private readonly Dictionary<string, Func<object>> _properties = new();
 
-    /// <summary>
-    /// Field names and the corresponding values to inject.
-    /// </summary>
-    private readonly Dictionary<string, Func<object>> _injectedFields = new();
+    private readonly List<(string Method, Type[]? signature, Func<object?[]> Arguments)> _invocations = new();
+
+    private readonly List<Func<object, object>> _preprocess = new();
+
+    private readonly List<Func<object, object>> _postprocess = new();
     
-    /// <summary>
-    /// Property names and the corresponding values to inject.
-    /// </summary>
-    private readonly Dictionary<string, Func<object>> _injectedProperties = new();
-    
-    /// <summary>
-    /// Method names and the corresponding arguments to invoke with.
-    /// </summary>
-    private readonly List<(string, Func<object?[]>?)> _injectedMethods = new();
-
     /// <summary>
     /// Preset the value of a field.
     /// </summary>
-    /// <param name="name">Name of the field.</param>
-    /// <param name="value">Value to preset.</param>
-    /// <returns>This entry.</returns>
-    public Preset PresetField(string name, Func<object> value)
+    /// <param name="field">Field to preset.</param>
+    /// <param name="value">Value delegate.</param>
+    /// <returns>This preset.</returns>
+    public Preset SetField(string field, Func<object> value)
     {
-        _injectedFields[name] = value;
+        _fields[field] = value;
         return this;
     }
-    
+
     /// <summary>
     /// Preset the value of a property.
     /// </summary>
-    /// <param name="name">Name of the property.</param>
-    /// <param name="value">Value to preset.</param>
-    /// <returns>This entry.</returns>
-    public Preset PresetProperty(string name, Func<object> value)
+    /// <param name="property">Property to preset.</param>
+    /// <param name="value">Value delegate.</param>
+    /// <returns>This preset.</returns>
+    public Preset SetProperty(string property, Func<object> value)
     {
-        _injectedProperties[name] = value;
-        return this;
-    }
-    
-    /// <summary>
-    /// Invoke a method after on the instance when it is injected.
-    /// </summary>
-    /// <param name="name">Name of the method.</param>
-    /// <param name="arguments">Arguments to pass the method.</param>
-    /// <returns>This entry.</returns>
-    public Preset InvokeMethod(string name, Func<object?[]>? arguments)
-    {
-        _injectedMethods.Add((name, arguments));
+        _properties[property] = value;
         return this;
     }
 
     /// <summary>
-    /// Check whether this preset is empty.
-    /// An empty preset can be removed safely.
+    /// Invoke a method.
     /// </summary>
-    /// <returns>True if this preset is empty, otherwise false.</returns>
-    internal bool IsEmpty()
-    {
-        return BoundBuilder == null && BoundDeclaration == null &&
-               _injectedFields.Count == 0 && _injectedProperties.Count == 0 && _injectedMethods.Count == 0;
-    }
-    
-    private readonly Type _category;
-
-    private readonly Container? _container;
-
-    public Preset(Type category, Container? container = null)
-    {
-        _category = category;
-        _container = container;
-    }
-    
-    /// <summary>
-    /// Return the builder instance of this preset.
-    /// </summary>
-    /// <returns>Builder instance, or null if it does not have one.</returns>
-    public Builder? AsBuilder()
-    {
-        return BoundBuilder;
-    }
-
-    /// <summary>
-    /// Add a builder to this preset if it does not have one.
-    /// </summary>
-    /// <param name="boundType">
-    /// Type for the builder to use,
-    /// if null, the builder will use the category to build.
+    /// <param name="method">Method to invoke.</param>
+    /// <param name="arguments">Arguments delegate.</param>
+    /// <param name="signature">
+    /// Optional signature. If the method to invoke has many overloads,
+    /// then its signature must be given to find the method to invoke.
     /// </param>
     /// <returns>This preset.</returns>
-    public Preset SetBuilder(Type? boundType = null)
+    public Preset InvokeMethod(string method, Func<object?[]> arguments, Type[]? signature = null)
     {
-        BoundBuilder ??= new Builder(boundType ?? _category, this, _container);
+        _invocations.Add((method, signature, arguments));
         return this;
     }
 
     /// <summary>
-    /// Remove the builder from this preset if it has one.
+    /// Add a preprocess. The preprocess will be invoked before the instance begin to be injected.
     /// </summary>
+    /// <param name="preprocessor">
+    /// A delegate, has the instance to inject as its parameter,
+    /// and returns the instance to substitute.</param>
     /// <returns>This preset.</returns>
-    public Preset UnsetBuilder()
+    public Preset Preprocess(Func<object, object> preprocessor)
     {
-        BoundBuilder = null;
+        _preprocess.Add(preprocessor);
         return this;
     }
 
     /// <summary>
-    /// Inject an instance with the given preset. This method does not need a container.
-    /// This method is the inject method used by <see cref="Container.Get"/>.
+    /// Add a preprocess. The postprocessor will be invoked after the instance has been injected.
+    /// </summary>
+    /// <param name="postprocessor">
+    /// A delegate, has the instance to inject as its parameter,
+    /// and returns the instance to substitute.</param>
+    /// <returns>This preset.</returns>
+    public Preset Postprocess(Func<object, object> postprocessor)
+    {
+        _postprocess.Add(postprocessor);
+        return this;
+    }
+    
+    /// <summary>
+    /// Inject an object according to this preset.
     /// </summary>
     /// <param name="instance">Instance to inject.</param>
-    public void Inject(object instance)
+    /// <returns>
+    /// Usually the instance passed in, sometimes the instance replaced by the preprocessor or postprocessor.
+    /// </returns>
+    public object Inject(object instance)
     {
+        instance = _preprocess.Aggregate(instance, 
+            (current, preprocessor) => preprocessor(current));
+
         var type = instance.GetType();
         
-        foreach (var (name, item) in _injectedFields)
+        // Inject fields.
+        foreach (var (name, value) in _fields)
         {
-            var field = 
-                type.GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            var field = type.GetField(name);
             if (field == null)
             {
-                Report.Warning("Injection Failure", "Can not find a field with the given name.")
-                    .AttachDetails("Class", type)
-                    .AttachDetails("Member", name)
+                Report.Warning("Failed to Inject", "Can not find the field.", this)
+                    .AttachDetails("Type", type)
+                    .AttachDetails("Name", name)
                     .Handle();
                 continue;
             }
             if (field.IsInitOnly)
             {
-                Report.Warning("Injection Failure", "Field is init-only.")
-                    .AttachDetails("Class", type)
-                    .AttachDetails("Member", name)
+                Report.Warning("Failed to Inject", "Field is initialize-only.", this)
+                    .AttachDetails("Type", type)
+                    .AttachDetails("Name", name)
                     .Handle();
                 continue;
             }
-            field.SetValue(instance, item.Invoke());
+            field.SetValue(instance, value());
         }
         
-        foreach (var (name, item) in _injectedProperties)
+        // Inject properties.
+        foreach (var (name, value) in _properties)
         {
-            var property = 
-                type.GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            var property = type.GetProperty(name);
             if (property == null)
             {
-                Report.Warning("Injection Failure",
-                        "Can not find a property with the given name.")
-                    .AttachDetails("Class", type)
-                    .AttachDetails("Member", name)
+                Report.Warning("Failed to Inject", "Can not find the property.", this)
+                    .AttachDetails("Type", type)
+                    .AttachDetails("Name", name)
                     .Handle();
                 continue;
             }
             if (!property.CanWrite)
             {
-                Report.Warning("Injection Failure",
-                        "Property is read-only.")
-                    .AttachDetails("Class", type)
-                    .AttachDetails("Member", name)
+                Report.Warning("Failed to Inject", "Can not write the property.", this)
+                    .AttachDetails("Type", type)
+                    .AttachDetails("Name", name)
                     .Handle();
                 continue;
             }
-            property.SetValue(instance, item.Invoke());
+            property.SetValue(instance, value());
         }
         
-        foreach (var (name, items) in _injectedMethods)
+        // Inject methods.
+        foreach (var (name, signature, arguments) in _invocations)
         {
-            var method = 
-                type.GetMethod(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            var method = signature == null ? 
+                type.GetMethod(name) : type.GetMethod(name, signature);
             if (method == null)
             {
-                Report.Warning("Injection Failure",
-                        "Can not find a method with the given name.")
-                    .AttachDetails("Class", type)
-                    .AttachDetails("Member", name)
-                    .Handle();
+                var report = Report.Warning("Failed to Inject", "Can find the matching method.",
+                        this)
+                    .AttachDetails("Type", type)
+                    .AttachDetails("Name", name);
+                if (signature != null)
+                    report.AttachDetails("Signature", signature);
+                report.Handle();
                 continue;
             }
-            method.Invoke(instance, items?.Invoke());
+
+            method.Invoke(instance, arguments());
         }
+        
+        instance = _postprocess.Aggregate(instance, 
+            (current, postprocessor) => postprocessor(current));
+
+        return instance;
     }
 }
