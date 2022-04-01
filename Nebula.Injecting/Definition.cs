@@ -1,4 +1,5 @@
-﻿using Nebula.Reporting;
+﻿using System.Reflection;
+using Nebula.Reporting;
 
 namespace Nebula.Injecting;
 
@@ -15,7 +16,7 @@ public class Definition
     /// <summary>
     /// If not null, then this definition will use this delegate to acquire the instance.
     /// </summary>
-    public Func<object>? BoundBuilder { get; private set; }
+    public Builder.Item? BoundBuilder { get; private set; }
     
     /// <summary>
     /// Class for the container or activator to instantiate the instance.
@@ -86,7 +87,7 @@ public class Definition
     /// </summary>
     /// <param name="builder">Builder delegate to bind.</param>
     /// <returns>This definition.</returns>
-    public Definition BindBuilder(Func<object> builder)
+    public Definition BindBuilder(Builder.Item builder)
     {
         BoundBuilder = builder;
         return this;
@@ -99,8 +100,10 @@ public class Definition
     /// Container to use if the builder is not bound. If it is null and the builder is not bound,
     /// then this preset will try to use the activator.
     /// </param>
+    /// <param name="member">Optional member information of the member to inject.</param>
+    /// <param name="holder">Optional holder to inject.</param>
     /// <returns>Object constructed by this definition.</returns>
-    public object Get(Container? container = null)
+    public object Get(Container? container = null, MemberInfo? member = null, object? holder = null)
     {
         if (_singletonInstance != null)
             return _singletonInstance;
@@ -108,7 +111,7 @@ public class Definition
         // Acquire instance.
         object? instance = null;
         if (BoundBuilder != null)
-            instance = BoundBuilder();
+            instance = BoundBuilder(member, holder);
         else
         {
             if (BoundClass == null)

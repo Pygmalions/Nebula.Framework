@@ -38,7 +38,7 @@ public class Container
             return;
         group.TryRemove(name ?? "", out _);
     }
-    
+
     /// <summary>
     /// Get an object from this container.
     /// </summary>
@@ -46,10 +46,24 @@ public class Container
     /// <param name="name">Name of the object.</param>
     /// <returns>Object instance, or null if not found.</returns>
     public object? Get(Type category, string? name = null)
+        => Get(category, name, null, null);
+    
+    /// <summary>
+    /// Get an object from the container with optional injection information.
+    /// </summary>
+    /// <param name="category">Category type of the object.</param>
+    /// <param name="name">Name of the object.</param>
+    /// <param name="member">Member information of the member to inject.</param>
+    /// <param name="holder">Object which holds the member to inject.</param>
+    /// <returns>Object instance, or null if not found.</returns>
+    private object? Get(Type category, string? name, MemberInfo? member, object? holder)
     {
         if (!_definitions.TryGetValue(category, out var group))
             return null;
-        return !group.TryGetValue(name ?? "", out var definition) ? null : definition.Get(this);
+        return group.TryGetValue(name ?? "", out var definition) ? 
+            definition.Get(this, member, holder) : 
+            group.TryGetValue("*", out var creator) ? 
+                creator.Get(this, member, holder) : null;
     }
     
     /// <summary>
@@ -198,6 +212,14 @@ public class Container
         }
     }
 
+    /// <summary>
+    /// Find all arguments of a method from this container.
+    /// </summary>
+    /// <param name="method">Method to prepare arguments for.</param>
+    /// <param name="arguments">Found arguments.</param>
+    /// <returns>
+    /// Returns true if all parameters are satisfied, otherwise false.
+    /// </returns>
     private bool FindArguments(MethodBase method, out object?[]? arguments)
     {
         var parameters = method.GetParameters();

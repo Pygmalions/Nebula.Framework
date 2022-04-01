@@ -31,7 +31,7 @@ public static class ContainerHelper
     /// Declare an object and bind a <see cref="Bind.Array"/> to it.
     /// This is equal to:
     /// <code>
-    /// Declare(...).BindBuilder(Bind.Array(...));
+    /// Declare(...).BindBuilder(Bind.Value(...));
     /// </code>
     /// </summary>
     /// <param name="container">Container to use.</param>
@@ -40,40 +40,8 @@ public static class ContainerHelper
     /// <typeparam name="TCategory">Category of the object.</typeparam>
     /// <returns>Definition of the object.</returns>
     public static Definition DeclareArray<TCategory>(this Container container, object?[] array, string? name = null)
-        => container.Declare(typeof(TCategory), name).BindBuilder(Bind.Array(array));
-    
-    /// <summary>
-    /// Declare an object and bind a <see cref="Bind.LazyValue"/> to it.
-    /// This is equal to:
-    /// <code>
-    /// Declare(...).BindBuilder(Bind.LazyValue(...));
-    /// </code>
-    /// </summary>
-    /// <param name="container">Container to use.</param>
-    /// <param name="value">Lazy value creator to bind.</param>
-    /// <param name="name">Name of the object.</param>
-    /// <typeparam name="TCategory">Category of the object.</typeparam>
-    /// <returns>Definition of the object.</returns>
-    public static Definition DeclareLazyValue<TCategory>(this Container container, Func<object> value, 
-        string? name = null)
-        => container.Declare(typeof(TCategory), name).BindBuilder(Bind.LazyValue(value));
-    
-    /// <summary>
-    /// Declare an object and bind a <see cref="Bind.LazyArray"/> to it.
-    /// This is equal to:
-    /// <code>
-    /// Declare(...).BindBuilder(Bind.LazyArray(...));
-    /// </code>
-    /// </summary>
-    /// <param name="container">Container to use.</param>
-    /// <param name="array">Lazy array creator to bind.</param>
-    /// <param name="name">Name of the object.</param>
-    /// <typeparam name="TCategory">Category of the object.</typeparam>
-    /// <returns>Definition of the object.</returns>
-    public static Definition DeclareLazyArray<TCategory>(this Container container, Func<object?[]> array, 
-        string? name = null)
-        => container.Declare(typeof(TCategory), name).BindBuilder(Bind.LazyArray(array));
-    
+        => container.Declare(typeof(TCategory), name).BindBuilder(Bind.Value(array));
+
     /// <summary>
     /// Revoke an object definition in this container.
     /// </summary>

@@ -4,7 +4,7 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <PackageVersion>0.2.0</PackageVersion>
+        <PackageVersion>0.2.1</PackageVersion>
         <Title>Nebula Injecting</Title>
         <Authors>Pygmalions</Authors>
         <Description>This library provides injection ability.</Description>
@@ -21,7 +21,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Include="Pygmalion.png" Pack="true" PackagePath="\" />
+        <None Update="Pygmalion.png" Pack="true" PackagePath="\" />
         <None Update="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 

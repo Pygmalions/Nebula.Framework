@@ -24,6 +24,12 @@ It contains a **Preset** to describe the injection information.
 - **Preset Injection**: it is the **non-intrusive** style which uses a preset to instruct the container to inject an instance.
 - **Passive Injection**: it is the **intrusive** style by marking *[Injection]* attribute on members.
 
+### Object Name
+
+When the required category and optional name is passed to the container, the null name will be considered as "" (empty string).
+Then the container will firstly perform the accurate matching;
+if it fails, then the container will try to find the definition with the name "*", and use it to acquire an instance.
+
 ## How to use
 
 ### Sample Object for Injection

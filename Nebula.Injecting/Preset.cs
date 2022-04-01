@@ -4,11 +4,11 @@ namespace Nebula.Injecting;
 
 public class Preset
 {
-    private readonly Dictionary<string, Func<object>> _fields = new();
+    private readonly Dictionary<string, Builder.Item> _fields = new();
 
-    private readonly Dictionary<string, Func<object>> _properties = new();
+    private readonly Dictionary<string, Builder.Item> _properties = new();
 
-    private readonly List<(string Method, Type[]? signature, Func<object?[]> Arguments)> _invocations = new();
+    private readonly List<(string Method, Type[]? signature, Builder.Array Arguments)> _invocations = new();
 
     private readonly List<Func<object, object>> _preprocess = new();
 
@@ -20,7 +20,7 @@ public class Preset
     /// <param name="field">Field to preset.</param>
     /// <param name="value">Value delegate.</param>
     /// <returns>This preset.</returns>
-    public Preset SetField(string field, Func<object> value)
+    public Preset SetField(string field, Builder.Item value)
     {
         _fields[field] = value;
         return this;
@@ -32,7 +32,7 @@ public class Preset
     /// <param name="property">Property to preset.</param>
     /// <param name="value">Value delegate.</param>
     /// <returns>This preset.</returns>
-    public Preset SetProperty(string property, Func<object> value)
+    public Preset SetProperty(string property, Builder.Item value)
     {
         _properties[property] = value;
         return this;
@@ -48,7 +48,7 @@ public class Preset
     /// then its signature must be given to find the method to invoke.
     /// </param>
     /// <returns>This preset.</returns>
-    public Preset InvokeMethod(string method, Func<object?[]> arguments, Type[]? signature = null)
+    public Preset InvokeMethod(string method, Builder.Array arguments, Type[]? signature = null)
     {
         _invocations.Add((method, signature, arguments));
         return this;
@@ -114,7 +114,7 @@ public class Preset
                     .Handle();
                 continue;
             }
-            field.SetValue(instance, value());
+            field.SetValue(instance, value(field, instance));
         }
         
         // Inject properties.
@@ -137,7 +137,7 @@ public class Preset
                     .Handle();
                 continue;
             }
-            property.SetValue(instance, value());
+            property.SetValue(instance, value(property, instance));
         }
         
         // Inject methods.
@@ -157,7 +157,7 @@ public class Preset
                 continue;
             }
 
-            method.Invoke(instance, arguments());
+            method.Invoke(instance, arguments(method, instance));
         }
         
         instance = _postprocess.Aggregate(instance, 

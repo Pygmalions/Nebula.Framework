@@ -1,4 +1,6 @@
-﻿namespace Nebula.Injecting;
+﻿using System.Reflection;
+
+namespace Nebula.Injecting;
 
 /// <summary>
 /// Static helper factory class to wrap instances into a delegate.
@@ -10,7 +12,7 @@ public static class Bind
     /// </summary>
     /// <param name="value">Value to bind.</param>
     /// <returns>Delegate which will always return the bound value.</returns>
-    public static Func<object> Value(object value)
+    public static Builder.Item Value(object value)
         => new ValueBinder(value).Get;
 
     /// <summary>
@@ -18,7 +20,7 @@ public static class Bind
     /// </summary>
     /// <param name="array">Array to bind.</param>
     /// <returns>Delegate which will always return the bound array.</returns>
-    public static Func<object?[]> Array(params object?[] array)
+    public static Builder.Array Array(params object?[] array)
         => new ArrayBinder(array).Get;
 
     /// <summary>
@@ -29,7 +31,7 @@ public static class Bind
     /// <returns>
     /// Delegate which will execute the creator for once and returns the cached value in following accesses.
     /// </returns>
-    public static Func<object> LazyValue(Func<object> creator)
+    public static Builder.Item LazyValue(Func<object> creator)
         => new LazyValueBinder(creator).Get;
 
     /// <summary>
@@ -40,7 +42,7 @@ public static class Bind
     /// <returns>
     /// Delegate which will execute the creator for once and returns the cached value in following accesses.
     /// </returns>
-    public static Func<object?[]> LazyArray(Func<object?[]> creator)
+    public static Builder.Array LazyArray(Func<object?[]> creator)
         => new LazyArrayBinder(creator).Get;
 
     /// <summary>
@@ -55,7 +57,7 @@ public static class Bind
             _instance = instance;
         }
 
-        public object Get() => _instance;
+        public object Get(MemberInfo? member, object? holder) => _instance;
     }
     
     /// <summary>
@@ -70,7 +72,7 @@ public static class Bind
             _instance = instance;
         }
 
-        public object?[] Get() => _instance;
+        public object?[] Get(MemberInfo? member, object? holder) => _instance;
     }
     
     /// <summary>
@@ -87,7 +89,7 @@ public static class Bind
             _creator = creator;
         }
 
-        public object Get()
+        public object Get(MemberInfo? member, object? holder)
         {
             if (_instance != null)
                 return _instance;
@@ -110,7 +112,7 @@ public static class Bind
             _creator = creator;
         }
 
-        public object?[] Get()
+        public object?[] Get(MemberInfo? member, object? holder)
         {
             if (_instance != null)
                 return _instance;
