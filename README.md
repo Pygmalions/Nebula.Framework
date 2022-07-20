@@ -15,12 +15,24 @@ NuGet packages can be found here:
 
 # Status
 
-[![Publish Packages](https://github.com/NebulaCommittee/Nebula.Framework/actions/workflows/publish_packages.yml/badge.svg?branch=main&event=push)](https://github.com/NebulaCommittee/Nebula.Framework/actions/workflows/publish_packages.yml)
+[![Publish Packages](https://github.com/Pygmalions/Nebula.Framework/actions/workflows/publish_packages.yml/badge.svg?branch=main&event=push)](https://github.com/Pygmalions/Nebula.Framework/actions/workflows/publish_packages.yml)
 
 Tests:
 
-[![Ubuntu Test](https://github.com/NebulaCommittee/Nebula.Framework/actions/workflows/ubuntu_test.yml/badge.svg?branch=main&event=push)](https://github.com/NebulaCommittee/Nebula.Framework/actions/workflows/ubuntu_test.yml)
-[![Windows Test](https://github.com/NebulaCommittee/Nebula.Framework/actions/workflows/windows_test.yml/badge.svg?branch=main&event=push)](https://github.com/NebulaCommittee/Nebula.Framework/actions/workflows/windows_test.yml)
+[![Ubuntu Test](https://github.com/Pygmalions/Nebula.Framework/actions/workflows/ubuntu_test.yml/badge.svg?branch=main&event=push)](https://github.com/Pygmalions/Nebula.Framework/actions/workflows/ubuntu_test.yml)
+[![Windows Test](https://github.com/Pygmalions/Nebula.Framework/actions/workflows/windows_test.yml/badge.svg?branch=main&event=push)](https://github.com/Pygmalions/Nebula.Framework/actions/workflows/windows_test.yml)
+
+# Attention
+
+Basic mechanism like AOP and IoC are separated to another repository [Prism](https://github.com/Pygmalions/Prism) and fully redesigned to
+improve their efficiency, extensibility and reduce the complexity of their API.
+
+We made this decision because we found that not all modules in Nebula Framework are helpful for common applications (web, desktop, etc) development.
+In those scenarios import all dependencies of Nebula is not acceptable for developers. 
+So we separate some basic modules which can be used in common scenarios to make them easier to use and receive contribution.
+
+Nebula is still under redesigning to reduce its concepts and its API complexity. The developing version will focus on the component model. 
+The new version is about to come out by the end of July. And by then we will update the repository and rewrite this readme document.
 
 # Roadmap
 
@@ -28,12 +40,12 @@ Tests:
 
 These libraries are the base of the framework.
 
-- [x] **Nebula.Reporting**: A central interface for errors and logs submitting and handling.
+- [x] **SEPARATED** Nebula.Reporting: A central interface for errors and logs submitting and handling.
 - [x] **Nebula.Extending**: An assembly filter for in-assembly auto discovery mechanisms.
-- [x] **Nebula.Injecting**: An IoC library, provides functions for both of intrusive injection (attribute) and non-intrusive injection (preset).
+- [x] **SEPARATED** Nebula.Injecting: An IoC library, provides functions for both of intrusive injection (attribute) and non-intrusive injection (preset).
 - [x] **Nebula.Translating**: It provides non-intrusive customized serializing and deserializing rules. 
 It is the base of the whole network communication mechanism.
-- [ ] **Nebula.Proxying**: It provides the proxy mechanism, which allows the behaviors of virtual methods to change dynamically in run-time.
+- [ ] **SEPARATED** Nebula.Proxying: It provides the proxy mechanism, which allows the behaviors of virtual methods to change dynamically in run-time.
 - [ ] **Nebula.Messaging**: It is a library of messaging interfaces. Messaging ability providers have to implement there interfaces.
 - [ ] **Nebula.Domain**: It provides a main container, and auto discover abilities among programs in the same host.
 
